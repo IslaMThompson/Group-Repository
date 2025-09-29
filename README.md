@@ -1,1 +1,2 @@
-Group project for software engineering methods
+Group project for software engineering methods, 
+Checking the workflow is working
