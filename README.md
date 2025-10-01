@@ -4,36 +4,42 @@
 [![LICENSE](https://img.shields.io/github/license/IslaMThompson/Group-Repository.svg?style=flat-square)](https://github.com/IslaMThompson/Group-Repository/blob/master/LICENSE)<br>
 [![Releases](https://img.shields.io/github/release/IslaMThomspson/Group-Repository/all.svg?style=flat-square)](https://github.com/IslaMThompson/Group-Repository/releases)
 
-## 📌 Code Review 1 – Lab Week 4
-The purpose of this review is to confirm that the **project workflow** is correctly set up.  
-Our group has completed **all requirements for Checklist Submission 1** using **IntelliJ IDEA**, **Maven**, **Docker**, and **GitHub Actions**.
+## 🚀 Project Setup & Workflow
+
+This repository represents our **team’s foundation** for the coursework project.  
+For **Code Review 1**, our focus was not on delivering features, but on ensuring a **robust development workflow** that supports the rest of the project.
+
+We chose the following stack and practices:
+
+| Tool/Method      | Purpose |
+|------------------|---------|
+| **IntelliJ IDEA** | Main development environment |
+| **Maven**        | Dependency management & JAR packaging |
+| **Docker**       | Containerisation & reproducibility |
+| **GitHub Actions** | CI/CD pipeline (build + Docker test) |
+| **GitFlow**      | Branching strategy (`master`, `develop`, `release`) |
 
 ---
 
-## ✅ Checklist Submission 1 (16% of CW Mark)
+## 📦 Build & Deployment
 
-- ✔ **GitHub Project created** and repository initialized.
-- ✔ **Product Backlog created** (available in `/docs` and GitHub Projects board).
-- ✔ **Maven build configured** – project builds successfully to a **self-contained JAR** (`target/*.jar`).
-- ✔ **Dockerfile implemented and tested** – container builds and runs the JAR.
-- ✔ **GitHub Actions workflow implemented** – CI/CD pipeline builds JAR and Docker image automatically.
-- ✔ **GitFlow workflow followed** – `master`, `develop`, and `release` branches created and in use.
-- ✔ **First release published** on GitHub from the `release` branch.
-- ✔ **Code of Conduct defined** (`CODE_OF_CONDUCT.md`).
+### Maven Build in IntelliJ IDEA
+- The project is built using **Maven** (`mvn clean install`)
+- Produces a **self-contained JAR** in `/target`
+
+### Dockerised Application
+- A **Dockerfile** builds and runs the JAR inside a container
+- Validated both locally and on **GitHub Actions**
+
+### CI/CD Pipeline
+- Every push triggers **GitHub Actions**
+- Workflow runs:
+    1. Maven build → JAR
+    2. Docker build → container
+    3. Run container tests
 
 ---
 
-## 🎯 Graded Criteria Submission 1 (4% of CW Mark)
+## 🔀 GitFlow in Action
 
-- 📊 **GitHub Metrics**: commits, issues, and pull requests show contributions from all members.
-- 🧑‍💻 **Code Quality**: consistent IntelliJ formatting, descriptive comments, and meaningful commit messages ensure maintainability.
-
----
-
-## 🛠️ Running the Project in IntelliJ IDEA
-
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/IslaMThompson/Group-Repository.git
-   cd Group-Repository
+We follow **GitFlow branching strategy**: 
