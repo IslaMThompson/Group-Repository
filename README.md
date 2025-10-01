@@ -69,15 +69,6 @@ release → snapshot for tagged releases
 
 ---
 
-## 👥 Team Members
-
-- Member 1 – Project Manager
-- Member 2 – DevOps Lead
-- Member 3 – Backend Developer
-- Member 4 – Documentation & QA
-
----
-
 ## 📄 License
 
 This project is licensed under the terms of the [MIT License](LICENSE).  
