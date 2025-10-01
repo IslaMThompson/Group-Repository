@@ -42,4 +42,42 @@ We chose the following stack and practices:
 
 ## 🔀 GitFlow in Action
 
-We follow **GitFlow branching strategy**: 
+We follow **GitFlow branching strategy**:
+master → production-ready code
+develop → integration of new features
+release → snapshot for tagged releases
+
+
+✔ First release created from `release` branch.
+
+---
+
+## 📊 Backlog & Documentation
+
+- **Product Backlog**: Maintained in `/docs` and GitHub Projects
+- **Code of Conduct**: Defined in `CODE_OF_CONDUCT.md`
+- **Meeting Notes**: Logged in `/docs/reviews/`
+
+---
+
+## 📈 What We Learned (So Far)
+
+- Setting up a project in **IntelliJ with Maven + Docker** is more complex than expected, but now fully automated.
+- **CI/CD with GitHub Actions** ensures our builds are repeatable and transparent for all team members.
+- **GitFlow** keeps development organised — feature branches merge into `develop`, which then feeds into `release` before final approval to `master`.
+- Working with **Docker** early gives us confidence that deployment won’t be a last-minute problem.
+
+---
+
+## 👥 Team Members
+
+- Member 1 – Project Manager
+- Member 2 – DevOps Lead
+- Member 3 – Backend Developer
+- Member 4 – Documentation & QA
+
+---
+
+## 📄 License
+
+This project is licensed under the terms of the [MIT License](LICENSE).  
