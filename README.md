@@ -1,10 +1,8 @@
 # Group project for software engineering methods<br>
 **Code Review 1 – Lab Week 4*
 
-![workflow](https://github.com/IslaMThompson/Group-Repository/actions/workflows/main.yml/badge.svg)<br>
-[![LICENSE](https://img.shields.io/github/license/IslaMThompson/Group-Repository.svg?style=flat-square)](https://github.com/IslaMThompson/Group-Repository/blob/master/LICENSE)<br>
-[![Releases](https://img.shields.io/github/release/IslaMThomspson/Group-Repository/all.svg?style=flat-square)](https://github.com/IslaMThompson/Group-Repository/releases)
-![Build](https://github.com/IslaMThompson/Group-Repository/actions/workflows/main.yml/badge.svg)  
+
+![workflow](https://github.com/IslaMThompson/Group-Repository/actions/workflows/main.yml/badge.svg)  
 [![License](https://img.shields.io/github/license/IslaMThompson/Group-Repository.svg?style=flat-square)](https://github.com/IslaMThompson/Group-Repository/blob/master/LICENSE)  
 [![Release](https://img.shields.io/github/v/release/IslaMThompson/Group-Repository?style=flat-square&color=brightgreen)](https://github.com/IslaMThompson/Group-Repository/releases)  
 ![Last Commit](https://img.shields.io/github/last-commit/IslaMThompson/Group-Repository?style=flat-square)  
