@@ -6,6 +6,26 @@ public class Main_class
 {
     public static void main(String[] args)
     {
+        // Create new Application
+        Main_class a = new Main_class();
+
+        // Connect to database
+        a.connect();
+
+        // Disconnect from database
+        a.disconnect();
+    }
+
+    /**
+     * Connection to MySQL database.
+     */
+    private Connection con = null;
+
+    /**
+     * Connect to the MySQL database.
+     */
+    public void connect()
+    {
         try
         {
             // Load Database driver
@@ -17,9 +37,7 @@ public class Main_class
             System.exit(-1);
         }
 
-        // Connection to the database
-        Connection con = null;
-        int retries = 100;
+        int retries = 10;
         for (int i = 0; i < retries; ++i)
         {
             System.out.println("Connecting to database...");
@@ -30,9 +48,6 @@ public class Main_class
                 // Connect to database
                 con = DriverManager.getConnection("jdbc:mysql://db:3306/employees?allowPublicKeyRetrieval=true&useSSL=false", "root", "example");
                 System.out.println("Successfully connected");
-                // Wait a bit
-                Thread.sleep(10000);
-                // Exit for loop
                 break;
             }
             catch (SQLException sqle)
@@ -45,7 +60,13 @@ public class Main_class
                 System.out.println("Thread interrupted? Should not happen.");
             }
         }
+    }
 
+    /**
+     * Disconnect from the MySQL database.
+     */
+    public void disconnect()
+    {
         if (con != null)
         {
             try
@@ -60,3 +81,4 @@ public class Main_class
         }
     }
 }
+
