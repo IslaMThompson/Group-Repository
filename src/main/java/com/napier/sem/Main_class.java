@@ -132,7 +132,7 @@ public class Main_class
             String strSelect =
                     "SELECT Code, Name, Continent, Region, Population, Capital "
                             + "FROM country "
-                            + "WHERE Code = " + code;
+                            + "WHERE Code = '" + code + "'";
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Return new employee if valid.
@@ -168,7 +168,7 @@ public class Main_class
                     city.name + "\n"
                             + city.country_code + "\n"
                             + city.district + "\n"
-                            + "Population:" + city.population + "\n");
+                            + "Population: " + city.population + "\n");
         }
     }
 
@@ -181,8 +181,8 @@ public class Main_class
                             + country.name + "\n"
                             + country.continent + "\n"
                             + country.region + "\n"
-                            + "Population:" + country.population + "\n"
-                            + "Capital:" + country.capital + "\n");
+                            + "Population: " + country.population + "\n"
+                            + "Capital: " + country.capital + "\n");
         }
     }
 }
