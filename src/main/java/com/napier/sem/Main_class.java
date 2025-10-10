@@ -12,8 +12,8 @@ public class Main_class
         // Connect to database
         a.connect();
 
-        City newCity = a.getCity(1);
-        displayCity(newCity);
+        Country newCountry = a.getCountry("AND");
+        displayCountry(newCountry);
 
         // Disconnect from database
         a.disconnect();
@@ -117,7 +117,45 @@ public class Main_class
         catch (Exception e)
         {
             System.out.println(e.getMessage());
-            System.out.println("Failed to get details");
+            System.out.println("Failed to get city details");
+            return null;
+        }
+    }
+
+    public Country getCountry(String code)
+    {
+        try
+        {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT Code, Name, Continent, Region, Population, Capital "
+                            + "FROM country "
+                            + "WHERE Code = " + code;
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next())
+            {
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                return country;
+            }
+            else
+                return null;
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details");
             return null;
         }
     }
@@ -127,11 +165,24 @@ public class Main_class
         if (city != null)
         {
             System.out.println(
-                    city.id + " "
-                            + city.name + " "
+                    city.name + "\n"
                             + city.country_code + "\n"
                             + city.district + "\n"
                             + "Population:" + city.population + "\n");
+        }
+    }
+
+    public static void displayCountry(Country country)
+    {
+        if (country != null)
+        {
+            System.out.println(
+                    country.code + "\n"
+                            + country.name + "\n"
+                            + country.continent + "\n"
+                            + country.region + "\n"
+                            + "Population:" + country.population + "\n"
+                            + "Capital:" + country.capital + "\n");
         }
     }
 }
