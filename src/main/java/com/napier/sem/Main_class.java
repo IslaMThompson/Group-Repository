@@ -12,6 +12,9 @@ public class Main_class
         // Connect to database
         a.connect();
 
+        City newCity = a.getCity(1);
+        displayCity(newCity);
+
         // Disconnect from database
         a.disconnect();
     }
@@ -78,6 +81,57 @@ public class Main_class
             {
                 System.out.println("Error closing connection to database");
             }
+        }
+    }
+
+    public City getCity(int ID)
+    {
+        try
+        {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT ID, Name, CountryCode, District, Population "
+                            + "FROM city "
+                            + "WHERE ID = " + ID;
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next())
+            {
+                City city = new City();
+                city.id = rset.getInt("ID");
+                city.name = rset.getString("Name");
+                city.country_code = rset.getString("CountryCode");
+                city.district = rset.getString("District");
+                city.population = rset.getInt("Population");
+                return city;
+            }
+            else
+                return null;
+
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get details");
+            return null;
+        }
+    }
+
+    public static void displayCity(City city)
+    {
+        if (city != null)
+        {
+            System.out.println(
+                    city.id + " "
+                            + city.name + " "
+                            + city.country_code + "\n"
+                            + city.district + "\n"
+                            + "Population:" + city.population + "\n");
         }
     }
 }
