@@ -1,0 +1,47 @@
+@startuml
+left to right direction
+actor PR as "Population reporter"
+
+rectangle World_Database
+
+rectangle "Organisation system" {
+    usecase UC1 as "Country population
+    by area"
+    usecase UC2 as "Numbered Country
+    population by area"
+    usecase UC3 as "Cities population
+    by area"
+    usecase UC4 as "Numbered Cities
+    population by area"
+    usecase UC5 as "Capital Cities
+    population by area"
+    usecase UC6 as "Numbered Capital Cities
+    population by area"
+    usecase UC7 as "Population in or
+    out cities by area"
+    usecase UC8 as "Total Population
+    by area"
+    usecase UC9 as "Total+% languages"
+
+    UC1 -- World_Database
+    UC2 -- World_Database
+    UC3 -- World_Database
+    UC4 -- World_Database
+    UC5 -- World_Database
+    UC6 -- World_Database
+    UC7 -- World_Database
+    UC8 -- World_Database
+    UC9 -- World_Database
+
+}
+PR -- UC1
+PR -- UC2
+PR -- UC3
+PR -- UC4
+PR -- UC5
+PR -- UC6
+PR -- UC7
+PR -- UC8
+PR -- UC9
+
+@enduml
