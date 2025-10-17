@@ -22,6 +22,14 @@ rectangle "Organisation system" {
     usecase UC8 as "Total Population
     by area"
     usecase UC9 as "Total+% languages"
+    usecase UC10 as "City Report"
+    usecase UC11 as "Country
+    Report"
+    usecase UC12 as "CountryLanguage
+    Report"
+    usecase UC13 as "Capital city
+    report"
+    usecase UC14 as "population report"
 
     UC1 -- World_Database
     UC2 -- World_Database
@@ -33,6 +41,19 @@ rectangle "Organisation system" {
     UC8 -- World_Database
     UC9 -- World_Database
 
+    UC1 ..> UC11 : include
+    UC2 ..> UC11 : include
+
+    UC3 ..> UC10 : include
+    UC4 ..> UC10 : include
+
+    UC5 ..> UC13 : include
+    UC6 ..> UC13 : include
+
+    UC7 ..> UC14 : include
+    UC8 ..> UC14 : include
+
+    UC9 ..> UC12 : includee
 }
 PR -- UC1
 PR -- UC2
