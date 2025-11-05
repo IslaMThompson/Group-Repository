@@ -302,7 +302,7 @@ public class App
 
             String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
                     "FROM country " +
-                    "WHERE Contient = '" + continent + "' " +
+                    "WHERE Continent = '" + continent + "' " +
                     "ORDER BY Population DESC " +
                     "LIMIT " + n;
 
