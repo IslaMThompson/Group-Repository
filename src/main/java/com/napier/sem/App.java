@@ -1,18 +1,23 @@
 package com.napier.sem;
 
 import java.sql.*;
+import java.util.ArrayList;
 
-public class Main_class
+public class App
 {
     public static void main(String[] args) {
         // Create new Application and connect to database
-        Main_class a = new Main_class();
+        App a = new App();
 
         if(args.length < 1){
             a.connect("localhost:33060", 30000);
         }else{
             a.connect(args[0], Integer.parseInt(args[1]));
         }
+
+        ArrayList<Country> allCountries = a.getAllCountries();
+
+
 
         // Disconnect from database
         a.disconnect();
@@ -162,6 +167,36 @@ public class Main_class
                             + country.continent + "\n"
                             + "Population: " + country.population + "\n"
                             + "Capital: " + country.capital + "\n");
+        }
+    }
+
+    public ArrayList<Country> getAllCountries()
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                                "FROM country " +
+                                "ORDER BY Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
         }
     }
 }
