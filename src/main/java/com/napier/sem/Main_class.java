@@ -167,8 +167,8 @@ public class Main_class
             System.out.println(
                     country.code + "\n"
                             + country.name + "\n"
-                            + country.continent + "\n"
                             + country.region + "\n"
+                            + country.continent + "\n"
                             + "Population: " + country.population + "\n"
                             + "Capital: " + country.capital + "\n");
         }
