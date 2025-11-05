@@ -15,9 +15,11 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
+        // Gets ArrayList of all countries in db.
         ArrayList<Country> allCountries = a.getAllCountries();
 
-
+        // Displays provided ArrayList of countries.
+        a.printCountries(allCountries);
 
         // Disconnect from database
         a.disconnect();
@@ -197,6 +199,35 @@ public class App
             System.out.println(e.getMessage());
             System.out.println("Failed to get country details.");
             return null;
+        }
+    }
+
+    /**
+     * Prints a list of countries.
+     *
+     * @param countries The list of countries to print.
+     */
+    public void printCountries(ArrayList<Country> countries)
+    {
+        // Check employees is not null.
+        if(countries == null)
+        {
+            System.out.println("No countries in list.");
+            return;
+        }
+
+        // Print header.
+        System.out.println(String.format("%-8s %-45s %-15s %-30s %-15s %-10s", "Code", "Name", "Continent", "Region", "Population", "Capital"));
+
+        // Loop over all countries in the list.
+        for(Country country : countries)
+        {
+            if(country == null)
+                continue;
+
+            String country_string = String.format("%-8s %-45s %-15s %-30s %-15s %-10s",
+                    country.code, country.name, country.continent, country.region, country.population, country.capital);
+            System.out.println(country_string);
         }
     }
 }
