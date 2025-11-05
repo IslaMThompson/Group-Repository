@@ -2,6 +2,7 @@ package com.napier.sem;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class App
 {
@@ -16,10 +17,12 @@ public class App
         }
 
         // Gets ArrayList of all countries in db.
-        ArrayList<Country> allCountries = a.getTopCountriesByContinent(5, "Asia");
-
+        ArrayList<Country> allCountries = a.getTopCountries();
         // Displays provided ArrayList of countries.
         a.printCountries(allCountries);
+
+        ArrayList<Country> countriesContinent = a.getTopCountriesByContinent("Africa");
+        a.printCountries(countriesContinent);
 
         // Disconnect from database
         a.disconnect();
@@ -264,10 +267,14 @@ public class App
         }
     }
 
-    public ArrayList<Country> getTopCountries(int n)
+    public ArrayList<Country> getTopCountries()
     {
         try{
             Statement stmt = con.createStatement();
+
+            Scanner lineRead = new Scanner(System.in);
+            System.out.print("Enter Number Of Lines To Output: ");
+            int n = lineRead.nextInt();
 
             String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
                     "FROM country " +
@@ -295,10 +302,14 @@ public class App
         }
     }
 
-    public ArrayList<Country> getTopCountriesByContinent(int n, String continent)
+    public ArrayList<Country> getTopCountriesByContinent(String continent)
     {
         try{
             Statement stmt = con.createStatement();
+
+            Scanner lineRead = new Scanner(System.in);
+            System.out.print("Enter Number Of Lines To Output: ");
+            int n = lineRead.nextInt();
 
             String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
                     "FROM country " +
@@ -327,10 +338,14 @@ public class App
         }
     }
 
-    public ArrayList<Country> getTopCountriesByRegion(int n, String region)
+    public ArrayList<Country> getTopCountriesByRegion(String region)
     {
         try{
             Statement stmt = con.createStatement();
+
+            Scanner lineRead = new Scanner(System.in);
+            System.out.print("Enter Number Of Lines To Output: ");
+            int n = lineRead.nextInt();
 
             String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
                     "FROM country " +
