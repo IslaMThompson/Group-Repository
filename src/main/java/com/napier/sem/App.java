@@ -16,10 +16,10 @@ public class App
         }
 
         // Gets ArrayList of all countries in db.
-        ArrayList<Country> allCountries = a.getAllCountries();
+        //ArrayList<Country> allCountries = a.getCountriesByRegion("Eastern Asia");
 
         // Displays provided ArrayList of countries.
-        a.printCountries(allCountries);
+        //cona.printCountries(allCountries);
 
         // Disconnect from database
         a.disconnect();
@@ -180,6 +180,68 @@ public class App
             String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
                                 "FROM country " +
                                 "ORDER BY Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
+        }
+    }
+
+    public ArrayList<Country> getCountriesByContinent(String continent)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                    "FROM country " +
+                    "WHERE Continent = '" + continent + "' " +
+                    "ORDER BY Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
+        }
+    }
+
+    public ArrayList<Country> getCountriesByRegion(String region)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                    "FROM country " +
+                    "WHERE Region = '" + region + "' " +
+                    "ORDER BY Population DESC;";
 
             ResultSet rset = stmt.executeQuery(strSelect);
 
