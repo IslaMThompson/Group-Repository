@@ -16,7 +16,7 @@ public class App
         }
 
         // Gets ArrayList of all countries in db.
-        ArrayList<Country> allCountries = a.getTopPopCountries(5);
+        ArrayList<Country> allCountries = a.getTopCountriesByContinent(5, "Asia");
 
         // Displays provided ArrayList of countries.
         a.printCountries(allCountries);
@@ -264,7 +264,7 @@ public class App
         }
     }
 
-    public ArrayList<Country> getTopPopCountries(int n)
+    public ArrayList<Country> getTopCountries(int n)
     {
         try{
             Statement stmt = con.createStatement();
@@ -295,7 +295,7 @@ public class App
         }
     }
 
-    public ArrayList<Country> getTopPopCountriesByContinent(int n, String continent)
+    public ArrayList<Country> getTopCountriesByContinent(int n, String continent)
     {
         try{
             Statement stmt = con.createStatement();
@@ -327,7 +327,7 @@ public class App
         }
     }
 
-    public ArrayList<Country> getTopPopCountriesByRegion(int n, String region)
+    public ArrayList<Country> getTopCountriesByRegion(int n, String region)
     {
         try{
             Statement stmt = con.createStatement();
