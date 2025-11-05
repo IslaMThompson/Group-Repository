@@ -12,8 +12,8 @@ public class Main_class
         // Connect to database
         a.connect();
 
-        Country newCountry = a.getCountry("AND");
-        displayCountry(newCountry);
+        //Country newCountry = a.getCountry("AND");
+        //displayCountry(newCountry);
 
         // Disconnect from database
         a.disconnect();
@@ -157,18 +157,6 @@ public class Main_class
             System.out.println(e.getMessage());
             System.out.println("Failed to get country details");
             return null;
-        }
-    }
-
-    public static void displayCity(City city)
-    {
-        if (city != null)
-        {
-            System.out.println(
-                    city.name + "\n"
-                            + city.country_code + "\n"
-                            + city.district + "\n"
-                            + "Population: " + city.population + "\n");
         }
     }
 
