@@ -1,18 +1,25 @@
 package com.napier.sem;
 
 import java.sql.*;
+import java.util.ArrayList;
 
-public class Main_class
+public class App
 {
     public static void main(String[] args) {
         // Create new Application and connect to database
-        Main_class a = new Main_class();
+        App a = new App();
 
         if(args.length < 1){
             a.connect("localhost:33060", 30000);
         }else{
             a.connect(args[0], Integer.parseInt(args[1]));
         }
+
+        // Gets ArrayList of all countries in db.
+        //ArrayList<Country> allCountries = a.getCountriesByRegion("Eastern Asia");
+
+        // Displays provided ArrayList of countries.
+        //cona.printCountries(allCountries);
 
         // Disconnect from database
         a.disconnect();
@@ -162,6 +169,127 @@ public class Main_class
                             + country.continent + "\n"
                             + "Population: " + country.population + "\n"
                             + "Capital: " + country.capital + "\n");
+        }
+    }
+
+    public ArrayList<Country> getAllCountries()
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                                "FROM country " +
+                                "ORDER BY Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
+        }
+    }
+
+    public ArrayList<Country> getCountriesByContinent(String continent)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                    "FROM country " +
+                    "WHERE Continent = '" + continent + "' " +
+                    "ORDER BY Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
+        }
+    }
+
+    public ArrayList<Country> getCountriesByRegion(String region)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                    "FROM country " +
+                    "WHERE Region = '" + region + "' " +
+                    "ORDER BY Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
+        }
+    }
+
+    /**
+     * Prints a list of countries.
+     *
+     * @param countries The list of countries to print.
+     */
+    public void printCountries(ArrayList<Country> countries)
+    {
+        // Check employees is not null.
+        if(countries == null)
+        {
+            System.out.println("No countries in list.");
+            return;
+        }
+
+        // Print header.
+        System.out.println(String.format("%-8s %-45s %-15s %-30s %-15s %-10s", "Code", "Name", "Continent", "Region", "Population", "Capital"));
+
+        // Loop over all countries in the list.
+        for(Country country : countries)
+        {
+            if(country == null)
+                continue;
+
+            String country_string = String.format("%-8s %-45s %-15s %-30s %-15s %-10s",
+                    country.code, country.name, country.continent, country.region, country.population, country.capital);
+            System.out.println(country_string);
         }
     }
 }
