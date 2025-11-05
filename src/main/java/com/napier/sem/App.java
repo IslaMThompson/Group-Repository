@@ -16,10 +16,10 @@ public class App
         }
 
         // Gets ArrayList of all countries in db.
-        //ArrayList<Country> allCountries = a.getCountriesByRegion("Eastern Asia");
+        ArrayList<Country> allCountries = a.getTopPopCountries(5);
 
         // Displays provided ArrayList of countries.
-        //cona.printCountries(allCountries);
+        a.printCountries(allCountries);
 
         // Disconnect from database
         a.disconnect();
@@ -242,6 +242,101 @@ public class App
                     "FROM country " +
                     "WHERE Region = '" + region + "' " +
                     "ORDER BY Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
+        }
+    }
+
+    public ArrayList<Country> getTopPopCountries(int n)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                    "FROM country " +
+                    "ORDER BY Population DESC " +
+                    "LIMIT " + n;
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
+        }
+    }
+
+    public ArrayList<Country> getTopPopCountriesByContinent(int n, String continent)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                    "FROM country " +
+                    "WHERE Contient = '" + continent + "' " +
+                    "ORDER BY Population DESC " +
+                    "LIMIT " + n;
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<Country> countries = new ArrayList<>();
+            while(rset.next()){
+                Country country = new Country();
+                country.code = rset.getString("Code");
+                country.name = rset.getString("Name");
+                country.continent = rset.getString("Continent");
+                country.region = rset.getString("Region");
+                country.population = rset.getInt("Population");
+                country.capital = rset.getInt("Capital");
+                countries.add(country);
+            }
+            return countries;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get country details.");
+            return null;
+        }
+    }
+
+    public ArrayList<Country> getTopPopCountriesByRegion(int n, String region)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
+                    "FROM country " +
+                    "WHERE Region = '" + region + "' " +
+                    "ORDER BY Population DESC " +
+                    "LIMIT " + n;
 
             ResultSet rset = stmt.executeQuery(strSelect);
 
