@@ -29,4 +29,9 @@ public class City {
      * City Population
      */
     public int population;
+
+    /**
+     * Country Name
+     */
+    public String country;
 }

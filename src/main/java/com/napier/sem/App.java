@@ -16,13 +16,8 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        // Gets ArrayList of all countries in db.
-        ArrayList<Country> allCountries = a.getTopCountries();
-        // Displays provided ArrayList of countries.
-        a.printCountries(allCountries);
-
-        ArrayList<Country> countriesContinent = a.getTopCountriesByContinent("Africa");
-        a.printCountries(countriesContinent);
+        City capCity = a.getCapital("Scotland");
+        a.displayCapital(capCity);
 
         // Disconnect from database
         a.disconnect();
@@ -85,44 +80,6 @@ public class App
         }
     }
 
-    public City getCity(int ID)
-    {
-        try
-        {
-            // Create an SQL statement
-            Statement stmt = con.createStatement();
-            // Create string for SQL statement
-            String strSelect =
-                    "SELECT ID, Name, CountryCode, District, Population "
-                            + "FROM city "
-                            + "WHERE ID = " + ID;
-            // Execute SQL statement
-            ResultSet rset = stmt.executeQuery(strSelect);
-            // Return new employee if valid.
-            // Check one is returned
-            if (rset.next())
-            {
-                City city = new City();
-                city.id = rset.getInt("ID");
-                city.name = rset.getString("Name");
-                city.country_code = rset.getString("CountryCode");
-                city.district = rset.getString("District");
-                city.population = rset.getInt("Population");
-                return city;
-            }
-            else
-                return null;
-
-
-        }
-        catch (Exception e)
-        {
-            System.out.println(e.getMessage());
-            System.out.println("Failed to get city details");
-            return null;
-        }
-    }
-
     public Country getCountry(String code)
     {
         try
@@ -161,6 +118,79 @@ public class App
         }
     }
 
+    public City getCity(String name)
+    {
+        try
+        {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.District, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.Name = '" + name + "' " +
+                            "AND city.CountryCode = country.Code;";
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next())
+            {
+                City city = new City();
+                city.name = rset.getString("city.Name");
+                city.country = rset.getString("country.Name");
+                city.district = rset.getString("city.District");
+                city.population = rset.getInt("city.Population");
+                return city;
+            }
+            else
+                return null;
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details");
+            return null;
+        }
+    }
+
+    public City getCapital(String country)
+    {
+        try
+        {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT country.Name, country.Capital, city.Population "
+                            + "FROM country, city "
+                            + "WHERE country.Name = '" + country + "' " +
+                            "AND city.Name = country.Capital;";
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next())
+            {
+                City city = new City();
+                city.name = rset.getString("country.Capital");
+                city.country = rset.getString("country.Name");
+                city.population = rset.getInt("city.Population");
+                return city;
+            }
+            else
+                return null;
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital details");
+            return null;
+        }
+    }
+
     public static void displayCountry(Country country)
     {
         if (country != null)
@@ -172,6 +202,29 @@ public class App
                             + country.continent + "\n"
                             + "Population: " + country.population + "\n"
                             + "Capital: " + country.capital + "\n");
+        }
+    }
+
+    public static void displayCity(City city)
+    {
+        if (city != null)
+        {
+            System.out.println(
+                    city.name + "\n"
+                            + city.country + "\n"
+                            + city.district + "\n"
+                            + "Population: " + city.population + "\n");
+        }
+    }
+
+    public static void displayCapital(City city)
+    {
+        if (city != null)
+        {
+            System.out.println(
+                    city.name + "\n"
+                            + city.country + "\n"
+                            + "Population: " + city.population + "\n");
         }
     }
 
@@ -402,5 +455,7 @@ public class App
             System.out.println(country_string);
         }
     }
-}
 
+
+
+}
