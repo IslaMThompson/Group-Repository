@@ -16,9 +16,6 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        City capCity = a.getCapital("United Kingdom");
-        a.displayCapital(capCity);
-
         // Disconnect from database
         a.disconnect();
     }
@@ -80,7 +77,12 @@ public class App
         }
     }
 
-    public Country getCountry(String code)
+    /**
+     * Returns the details of a specified country.
+     * @param name - Country name
+     * @return country
+     */
+    public Country getCountry(String name)
     {
         try
         {
@@ -90,7 +92,7 @@ public class App
             String strSelect =
                     "SELECT Code, Name, Continent, Region, Population, Capital "
                             + "FROM country "
-                            + "WHERE Code = '" + code + "'";
+                            + "WHERE Name = '" + name + "'";
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Return new employee if valid.
@@ -118,6 +120,11 @@ public class App
         }
     }
 
+    /**
+     * Returns the details of a specified city.
+     * @param name - City name
+     * @return city
+     */
     public City getCity(String name)
     {
         try
@@ -155,6 +162,11 @@ public class App
         }
     }
 
+    /**
+     * Returns the details of the capital city for a specified country.
+     * @param country - Country name
+     * @return capital
+     */
     public City getCapital(String country)
     {
         try
@@ -191,6 +203,10 @@ public class App
         }
     }
 
+    /**
+     * Displays the details for a Country class variable.
+     * @param country - Country details
+     */
     public static void displayCountry(Country country)
     {
         if (country != null)
@@ -205,6 +221,10 @@ public class App
         }
     }
 
+    /**
+     * Displays the details for a City class variable.
+     * @param city - City details
+     */
     public static void displayCity(City city)
     {
         if (city != null)
@@ -217,6 +237,10 @@ public class App
         }
     }
 
+    /**
+     * Displays the details for a City class variable where the city is the capital of the country.
+     * @param city - Capital city details
+     */
     public static void displayCapital(City city)
     {
         if (city != null)
@@ -228,6 +252,10 @@ public class App
         }
     }
 
+    /**
+     * Returns list of all countries details in the globe.
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getAllCountries()
     {
         try{
@@ -258,6 +286,11 @@ public class App
         }
     }
 
+    /**
+     * Returns list of all countries details in a specified continent.
+     * @param continent
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getCountriesByContinent(String continent)
     {
         try{
@@ -289,6 +322,11 @@ public class App
         }
     }
 
+    /**
+     * Returns list of all countries details in a specified region.
+     * @param region
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getCountriesByRegion(String region)
     {
         try{
@@ -320,6 +358,10 @@ public class App
         }
     }
 
+    /**
+     * Returns the top 'n' (user-input) of countries from the globe.
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getTopCountries()
     {
         try{
@@ -355,6 +397,11 @@ public class App
         }
     }
 
+    /**
+     * Returns the top 'n' (user-input) of countries from a continent.
+     * @param continent
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getTopCountriesByContinent(String continent)
     {
         try{
@@ -391,6 +438,11 @@ public class App
         }
     }
 
+    /**
+     * Returns the top 'n' (user-input) of countries from a region.
+     * @param region
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getTopCountriesByRegion(String region)
     {
         try{
