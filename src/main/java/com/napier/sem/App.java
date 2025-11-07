@@ -16,7 +16,7 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        City capCity = a.getCapital("Scotland");
+        City capCity = a.getCapital("United Kingdom");
         a.displayCapital(capCity);
 
         // Disconnect from database
@@ -163,10 +163,10 @@ public class App
             Statement stmt = con.createStatement();
             // Create string for SQL statement
             String strSelect =
-                    "SELECT country.Name, country.Capital, city.Population "
-                            + "FROM country, city "
+                    "SELECT country.Name AS CountryName, city.Name AS CityName, city.Population "
+                            + "FROM city, country "
                             + "WHERE country.Name = '" + country + "' " +
-                            "AND city.Name = country.Capital;";
+                            "AND city.ID = country.Capital;";
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Return new employee if valid.
@@ -174,8 +174,8 @@ public class App
             if (rset.next())
             {
                 City city = new City();
-                city.name = rset.getString("country.Capital");
-                city.country = rset.getString("country.Name");
+                city.name = rset.getString("CityName");
+                city.country = rset.getString("CountryName");
                 city.population = rset.getInt("city.Population");
                 return city;
             }
