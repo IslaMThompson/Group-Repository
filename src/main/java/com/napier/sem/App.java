@@ -16,7 +16,7 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        ArrayList<City> allCities = a.getAllCities();
+        ArrayList<City> allCities = a.getAllCitiesByContinent("Europe");
         a.printCities(allCities);
 
         // Disconnect from database
@@ -491,6 +491,36 @@ public class App
                     "SELECT city.Name, country.Name, city.District, city.Population "
                             + "FROM city, country "
                             + "WHERE city.CountryCode = country.Code;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> cities = new ArrayList<>();
+            while(rset.next()){
+                City city = new City();
+                city.name = rset.getString("city.Name");
+                city.country = rset.getString("country.Name");
+                city.district = rset.getString("city.District");
+                city.population = rset.getInt("city.Population");
+                cities.add(city);
+            }
+            return cities;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details.");
+            return null;
+        }
+    }
+
+    public ArrayList<City> getAllCitiesByContinent(String continent)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.District, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.CountryCode = country.Code " +
+                            "AND country.Continent = '" + continent + "';";
 
             ResultSet rset = stmt.executeQuery(strSelect);
 
