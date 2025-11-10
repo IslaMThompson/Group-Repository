@@ -34,4 +34,5 @@ public class City {
      * Country Name
      */
     public String country;
+
 }

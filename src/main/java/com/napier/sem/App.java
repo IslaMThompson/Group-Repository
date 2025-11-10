@@ -16,6 +16,9 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
+        ArrayList<City> allCities = a.getAllCities();
+        a.printCities(allCities);
+
         // Disconnect from database
         a.disconnect();
     }
@@ -479,6 +482,35 @@ public class App
         }
     }
 
+    public ArrayList<City> getAllCities()
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.District, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.CountryCode = country.Code;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> cities = new ArrayList<>();
+            while(rset.next()){
+                City city = new City();
+                city.name = rset.getString("city.Name");
+                city.country = rset.getString("country.Name");
+                city.district = rset.getString("city.District");
+                city.population = rset.getInt("city.Population");
+                cities.add(city);
+            }
+            return cities;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details.");
+            return null;
+        }
+    }
+
     /**
      * Prints a list of countries.
      *
@@ -508,6 +540,52 @@ public class App
         }
     }
 
+    public void printCities(ArrayList<City> cities)
+    {
+        // Check employees is not null.
+        if(cities == null)
+        {
+            System.out.println("No countries in list.");
+            return;
+        }
 
+        // Print header.
+        System.out.println(String.format("%-40s %-45s %-20s %-10s", "City", "Country", "District", "Population"));
+
+        // Loop over all countries in the list.
+        for(City city : cities)
+        {
+            if(city == null)
+                continue;
+
+            String country_string = String.format("%-40s %-45s %-20s %-10s",
+                    city.name, city.country, city.district, city.population);
+            System.out.println(country_string);
+        }
+    }
+
+    public void printCapitals(ArrayList<City> capitals)
+    {
+        // Check employees is not null.
+        if(capitals == null)
+        {
+            System.out.println("No countries in list.");
+            return;
+        }
+
+        // Print header.
+        System.out.println(String.format("%-40s %-45s %-10s", "City", "Country", "Population"));
+
+        // Loop over all countries in the list.
+        for(City capital : capitals)
+        {
+            if(capital == null)
+                continue;
+
+            String country_string = String.format("%-40s %-45s %-10s",
+                    capital.name, capital.country, capital.population);
+            System.out.println(country_string);
+        }
+    }
 
 }
