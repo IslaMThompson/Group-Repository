@@ -402,5 +402,61 @@ public class App
             System.out.println(country_string);
         }
     }
+
+    /**
+     * Prints a report of total speakers of specific languages
+     * (Chinese, English, Hindi, Spanish), ordered from highest to lowest
+     */
+    public void getLanguageReport()
+    {
+        try
+        {
+            // new sql statement obj
+            Statement stmt = con.createStatement();
+
+            // joining countryLanguage and country to combine the language and population data
+            // filters through only the specified languages
+            String strSelect =
+                    "SELECT cl.Language, " +
+                            "       SUM((c.Population * cl.Percentage) / 100) AS TotalSpeakers, " +
+                            "       (SUM((c.Population * cl.Percentage) / 100) / (SELECT SUM(Population) FROM country)) * 100 AS WorldPercentage " +
+                            "FROM countrylanguage cl " +
+                            "JOIN country c ON c.Code = cl.CountryCode " +
+                            "WHERE cl.Language IN ('Chinese', 'English', 'Hindi', 'Spanish', 'Arabic') " +
+                            "GROUP BY cl.Language " +
+                            "ORDER BY TotalSpeakers DESC;";
+
+            // execute the query and store the results
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            // formatting the table header
+            System.out.println(String.format("%-15s %-20s %-15s", "Language", "Total Speakers", "World %"));
+
+            // iterating through each record in the result set
+            while (rset.next())
+            {
+                // extracting data from each column
+                String language = rset.getString("Language");
+                long totalSpeakers = rset.getLong("TotalSpeakers");
+                double worldPercentage = rset.getDouble("WorldPercentage");
+
+                // printing using the format
+                System.out.println(String.format("%-15s %-20d %-15.2f", language, totalSpeakers, worldPercentage));
+            }
+
+            // closing the result set and statement
+            rset.close();
+            stmt.close();
+        }
+        catch (Exception e)
+        {
+            // print the specific sql error message
+            System.out.println(e.getMessage());
+            // print user friendly error message
+            System.out.println("Failed to get language report");
+        }
+    }
+
+
 }
 
