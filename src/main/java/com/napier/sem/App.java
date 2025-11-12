@@ -16,13 +16,8 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        // Gets ArrayList of all countries in db.
-        ArrayList<Country> allCountries = a.getTopCountries();
-        // Displays provided ArrayList of countries.
-        a.printCountries(allCountries);
-
-        ArrayList<Country> countriesContinent = a.getTopCountriesByContinent("Africa");
-        a.printCountries(countriesContinent);
+        ArrayList<City> allCapitals = a.getAllCapitalsByRegion("Western Europe");
+        a.printCapitals(allCapitals);
 
         // Disconnect from database
         a.disconnect();
@@ -85,45 +80,12 @@ public class App
         }
     }
 
-    public City getCity(int ID)
-    {
-        try
-        {
-            // Create an SQL statement
-            Statement stmt = con.createStatement();
-            // Create string for SQL statement
-            String strSelect =
-                    "SELECT ID, Name, CountryCode, District, Population "
-                            + "FROM city "
-                            + "WHERE ID = " + ID;
-            // Execute SQL statement
-            ResultSet rset = stmt.executeQuery(strSelect);
-            // Return new employee if valid.
-            // Check one is returned
-            if (rset.next())
-            {
-                City city = new City();
-                city.id = rset.getInt("ID");
-                city.name = rset.getString("Name");
-                city.country_code = rset.getString("CountryCode");
-                city.district = rset.getString("District");
-                city.population = rset.getInt("Population");
-                return city;
-            }
-            else
-                return null;
-
-
-        }
-        catch (Exception e)
-        {
-            System.out.println(e.getMessage());
-            System.out.println("Failed to get city details");
-            return null;
-        }
-    }
-
-    public Country getCountry(String code)
+    /**
+     * Returns the details of a specified country.
+     * @param name - Country name
+     * @return country
+     */
+    public Country getCountry(String name)
     {
         try
         {
@@ -133,7 +95,7 @@ public class App
             String strSelect =
                     "SELECT Code, Name, Continent, Region, Population, Capital "
                             + "FROM country "
-                            + "WHERE Code = '" + code + "'";
+                            + "WHERE Name = '" + name + "'";
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Return new employee if valid.
@@ -161,6 +123,93 @@ public class App
         }
     }
 
+    /**
+     * Returns the details of a specified city.
+     * @param name - City name
+     * @return city
+     */
+    public City getCity(String name)
+    {
+        try
+        {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.District, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.Name = '" + name + "' " +
+                            "AND city.CountryCode = country.Code;";
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next())
+            {
+                City city = new City();
+                city.name = rset.getString("city.Name");
+                city.country = rset.getString("country.Name");
+                city.district = rset.getString("city.District");
+                city.population = rset.getInt("city.Population");
+                return city;
+            }
+            else
+                return null;
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details");
+            return null;
+        }
+    }
+
+    /**
+     * Returns the details of the capital city for a specified country.
+     * @param country - Country name
+     * @return capital
+     */
+    public City getCapital(String country)
+    {
+        try
+        {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT country.Name AS CountryName, city.Name AS CityName, city.Population "
+                            + "FROM city, country "
+                            + "WHERE country.Name = '" + country + "' " +
+                            "AND city.ID = country.Capital;";
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next())
+            {
+                City city = new City();
+                city.name = rset.getString("CityName");
+                city.country = rset.getString("CountryName");
+                city.population = rset.getInt("city.Population");
+                return city;
+            }
+            else
+                return null;
+
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital details");
+            return null;
+        }
+    }
+
+    /**
+     * Displays the details for a Country class variable.
+     * @param country - Country details
+     */
     public static void displayCountry(Country country)
     {
         if (country != null)
@@ -175,6 +224,41 @@ public class App
         }
     }
 
+    /**
+     * Displays the details for a City class variable.
+     * @param city - City details
+     */
+    public static void displayCity(City city)
+    {
+        if (city != null)
+        {
+            System.out.println(
+                    city.name + "\n"
+                            + city.country + "\n"
+                            + city.district + "\n"
+                            + "Population: " + city.population + "\n");
+        }
+    }
+
+    /**
+     * Displays the details for a City class variable where the city is the capital of the country.
+     * @param city - Capital city details
+     */
+    public static void displayCapital(City city)
+    {
+        if (city != null)
+        {
+            System.out.println(
+                    city.name + "\n"
+                            + city.country + "\n"
+                            + "Population: " + city.population + "\n");
+        }
+    }
+
+    /**
+     * Returns list of all countries details in the globe.
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getAllCountries()
     {
         try{
@@ -205,6 +289,11 @@ public class App
         }
     }
 
+    /**
+     * Returns list of all countries details in a specified continent.
+     * @param continent
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getCountriesByContinent(String continent)
     {
         try{
@@ -236,6 +325,11 @@ public class App
         }
     }
 
+    /**
+     * Returns list of all countries details in a specified region.
+     * @param region
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getCountriesByRegion(String region)
     {
         try{
@@ -267,6 +361,10 @@ public class App
         }
     }
 
+    /**
+     * Returns the top 'n' (user-input) of countries from the globe.
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getTopCountries()
     {
         try{
@@ -302,6 +400,11 @@ public class App
         }
     }
 
+    /**
+     * Returns the top 'n' (user-input) of countries from a continent.
+     * @param continent
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getTopCountriesByContinent(String continent)
     {
         try{
@@ -338,6 +441,11 @@ public class App
         }
     }
 
+    /**
+     * Returns the top 'n' (user-input) of countries from a region.
+     * @param region
+     * @return ArrayList<Country> countries
+     */
     public ArrayList<Country> getTopCountriesByRegion(String region)
     {
         try{
@@ -374,6 +482,184 @@ public class App
         }
     }
 
+    public ArrayList<City> getAllCities()
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.District, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.CountryCode = country.Code;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> cities = new ArrayList<>();
+            while(rset.next()){
+                City city = new City();
+                city.name = rset.getString("city.Name");
+                city.country = rset.getString("country.Name");
+                city.district = rset.getString("city.District");
+                city.population = rset.getInt("city.Population");
+                cities.add(city);
+            }
+            return cities;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details.");
+            return null;
+        }
+    }
+
+    public ArrayList<City> getAllCitiesByContinent(String continent)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.District, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.CountryCode = country.Code " +
+                            "AND country.Continent = '" + continent + "';";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> cities = new ArrayList<>();
+            while(rset.next()){
+                City city = new City();
+                city.name = rset.getString("city.Name");
+                city.country = rset.getString("country.Name");
+                city.district = rset.getString("city.District");
+                city.population = rset.getInt("city.Population");
+                cities.add(city);
+            }
+            return cities;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details.");
+            return null;
+        }
+    }
+
+    public ArrayList<City> getAllCitiesByRegion(String region)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.District, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.CountryCode = country.Code " +
+                            "AND country.Region = '" + region + "';";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> cities = new ArrayList<>();
+            while(rset.next()){
+                City city = new City();
+                city.name = rset.getString("city.Name");
+                city.country = rset.getString("country.Name");
+                city.district = rset.getString("city.District");
+                city.population = rset.getInt("city.Population");
+                cities.add(city);
+            }
+            return cities;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details.");
+            return null;
+        }
+    }
+
+    public ArrayList<City> getAllCapitals()
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.ID = country.Capital "
+                            + "ORDER BY city.Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> capitals = new ArrayList<>();
+            while(rset.next()){
+                City capital = new City();
+                capital.name = rset.getString("city.Name");
+                capital.country = rset.getString("country.Name");
+                capital.population = rset.getInt("city.Population");
+                capitals.add(capital);
+            }
+            return capitals;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital city details.");
+            return null;
+        }
+    }
+
+    public ArrayList<City> getAllCapitalsByContinent(String continent)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.ID = country.Capital "
+                            + "AND country.Continent = '" + continent + "' "
+                            + "ORDER BY city.Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> capitals = new ArrayList<>();
+            while(rset.next()){
+                City capital = new City();
+                capital.name = rset.getString("city.Name");
+                capital.country = rset.getString("country.Name");
+                capital.population = rset.getInt("city.Population");
+                capitals.add(capital);
+            }
+            return capitals;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital city details.");
+            return null;
+        }
+    }
+
+    public ArrayList<City> getAllCapitalsByRegion(String region)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.ID = country.Capital "
+                            + "AND country.Region = '" + region + "' "
+                            + "ORDER BY city.Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> capitals = new ArrayList<>();
+            while(rset.next()){
+                City capital = new City();
+                capital.name = rset.getString("city.Name");
+                capital.country = rset.getString("country.Name");
+                capital.population = rset.getInt("city.Population");
+                capitals.add(capital);
+            }
+            return capitals;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital city details.");
+            return null;
+        }
+    }
+
     /**
      * Prints a list of countries.
      *
@@ -402,5 +688,53 @@ public class App
             System.out.println(country_string);
         }
     }
-}
 
+    public void printCities(ArrayList<City> cities)
+    {
+        // Check employees is not null.
+        if(cities == null)
+        {
+            System.out.println("No countries in list.");
+            return;
+        }
+
+        // Print header.
+        System.out.println(String.format("%-40s %-45s %-20s %-10s", "City", "Country", "District", "Population"));
+
+        // Loop over all countries in the list.
+        for(City city : cities)
+        {
+            if(city == null)
+                continue;
+
+            String country_string = String.format("%-40s %-45s %-20s %-10s",
+                    city.name, city.country, city.district, city.population);
+            System.out.println(country_string);
+        }
+    }
+
+    public void printCapitals(ArrayList<City> capitals)
+    {
+        // Check employees is not null.
+        if(capitals == null)
+        {
+            System.out.println("No countries in list.");
+            return;
+        }
+
+        // Print header.
+        System.out.println(String.format("%-40s %-45s %-10s", "City", "Country", "Population"));
+
+        // Loop over all countries in the list.
+        for(City capital : capitals)
+        {
+            if(capital == null)
+                continue;
+
+            String country_string = String.format("%-40s %-45s %-10s",
+                    capital.name, capital.country, capital.population);
+            System.out.println(country_string);
+        }
+    }
+
+}
