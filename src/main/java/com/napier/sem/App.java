@@ -16,8 +16,8 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        ArrayList<City> allCities = a.getAllCitiesByRegion("Southern Africa");
-        a.printCities(allCities);
+        ArrayList<City> allCapitals = a.getAllCapitals();
+        a.printCapitals(allCapitals);
 
         // Disconnect from database
         a.disconnect();
@@ -567,6 +567,35 @@ public class App
         } catch(Exception e){
             System.out.println(e.getMessage());
             System.out.println("Failed to get city details.");
+            return null;
+        }
+    }
+
+    public ArrayList<City> getAllCapitals()
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.ID = country.Capital "
+                            + "ORDER BY city.Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> capitals = new ArrayList<>();
+            while(rset.next()){
+                City capital = new City();
+                capital.name = rset.getString("city.Name");
+                capital.country = rset.getString("country.Name");
+                capital.population = rset.getInt("city.Population");
+                capitals.add(capital);
+            }
+            return capitals;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital city details.");
             return null;
         }
     }
