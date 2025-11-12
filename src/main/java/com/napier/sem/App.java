@@ -16,7 +16,7 @@ public class App
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        ArrayList<City> allCapitals = a.getAllCapitalsByContinent("Europe");
+        ArrayList<City> allCapitals = a.getAllCapitalsByRegion("Western Europe");
         a.printCapitals(allCapitals);
 
         // Disconnect from database
@@ -610,6 +610,36 @@ public class App
                             + "FROM city, country "
                             + "WHERE city.ID = country.Capital "
                             + "AND country.Continent = '" + continent + "' "
+                            + "ORDER BY city.Population DESC;";
+
+            ResultSet rset = stmt.executeQuery(strSelect);
+
+            ArrayList<City> capitals = new ArrayList<>();
+            while(rset.next()){
+                City capital = new City();
+                capital.name = rset.getString("city.Name");
+                capital.country = rset.getString("country.Name");
+                capital.population = rset.getInt("city.Population");
+                capitals.add(capital);
+            }
+            return capitals;
+        } catch(Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital city details.");
+            return null;
+        }
+    }
+
+    public ArrayList<City> getAllCapitalsByRegion(String region)
+    {
+        try{
+            Statement stmt = con.createStatement();
+
+            String strSelect =
+                    "SELECT city.Name, country.Name, city.Population "
+                            + "FROM city, country "
+                            + "WHERE city.ID = country.Capital "
+                            + "AND country.Region = '" + region + "' "
                             + "ORDER BY city.Population DESC;";
 
             ResultSet rset = stmt.executeQuery(strSelect);
