@@ -20,7 +20,7 @@ public class App {
         // Displays provided ArrayList of countries.
         a.printCountries(allCountries);
 
-        a.getPopulationSummaryReport();
+        a.getCapitalCitiesReport();
 
         ArrayList<Country> countriesContinent = a.getTopCountriesByContinent("Africa");
         a.printCountries(countriesContinent);
@@ -849,6 +849,105 @@ public class App {
             System.out.println("Failed to generate population summary report");
         }
     }
+
+    /**
+     * Produces a report of capital cities in a given area
+     * (world, continent, or region) sorted by population (highest → lowest).
+     */
+    public void getCapitalCitiesReport()
+    {
+        try
+        {
+            Scanner in = new Scanner(System.in);
+
+            // ask area type
+            System.out.print("Enter area type (world, continent, region): ");
+            String areaType = in.nextLine();
+
+            String areaName = "";
+
+            // only ask for name if needed
+            if (!areaType.equalsIgnoreCase("world"))
+            {
+                System.out.print("Enter the name of the " + areaType + ": ");
+                areaName = in.nextLine();
+            }
+
+            // ask for number of capitals to display
+            System.out.print("Enter number of capital cities to display: ");
+            int n = in.nextInt();
+
+            // new SQL statement
+            Statement stmt = con.createStatement();
+            String query = "";
+
+            // world
+            if (areaType.equalsIgnoreCase("world"))
+            {
+                query =
+                        "SELECT city.Name AS Capital, country.Name AS Country, city.Population " +
+                                "FROM city " +
+                                "JOIN country ON city.ID = country.Capital " +
+                                "ORDER BY city.Population DESC " +
+                                "LIMIT " + n + ";";
+            }
+            // continent
+            else if (areaType.equalsIgnoreCase("continent"))
+            {
+                query =
+                        "SELECT city.Name AS Capital, country.Name AS Country, city.Population " +
+                                "FROM city " +
+                                "JOIN country ON city.ID = country.Capital " +
+                                "WHERE country.Continent = '" + areaName + "' " +
+                                "ORDER BY city.Population DESC " +
+                                "LIMIT " + n + ";";
+            }
+            // region
+            else if (areaType.equalsIgnoreCase("region"))
+            {
+                query =
+                        "SELECT city.Name AS Capital, country.Name AS Country, city.Population " +
+                                "FROM city " +
+                                "JOIN country ON city.ID = country.Capital " +
+                                "WHERE country.Region = '" + areaName + "' " +
+                                "ORDER BY city.Population DESC " +
+                                "LIMIT " + n + ";";
+            }
+            else
+            {
+                System.out.println("Invalid area type.");
+                return;
+            }
+
+            // run query
+            ResultSet rset = stmt.executeQuery(query);
+
+            // header
+            System.out.println("\n=== Capital Cities Report ===\n");
+            System.out.println(String.format("%-35s %-35s %-15s",
+                    "Capital City", "Country", "Population"));
+
+            // results
+            while (rset.next())
+            {
+                String capital = rset.getString("Capital");
+                String country = rset.getString("Country");
+                int pop = rset.getInt("Population");
+
+                System.out.println(String.format("%-35s %-35s %-15d",
+                        capital, country, pop));
+            }
+
+            rset.close();
+            stmt.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital cities report");
+        }
+    }
+
 
 }
 
