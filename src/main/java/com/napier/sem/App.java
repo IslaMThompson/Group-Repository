@@ -21,12 +21,16 @@ public class App
         // Displays provided ArrayList of countries.
         a.printCountries(allCountries);
 
+        a.getPopulationReport();
+
         ArrayList<Country> countriesContinent = a.getTopCountriesByContinent("Africa");
         a.printCountries(countriesContinent);
 
         // Disconnect from database
         a.disconnect();
     }
+
+
 
     /**
      * Connection to MySQL database.
@@ -400,6 +404,87 @@ public class App
             String country_string = String.format("%-8s %-45s %-15s %-30s %-15s %-10s",
                     country.code, country.name, country.continent, country.region, country.population, country.capital);
             System.out.println(country_string);
+        }
+    }
+
+    public void getPopulationReport()
+    {
+        try {
+            Statement stmt = con.createStatement();
+
+            System.out.println("\n=== Total Population Report ===");
+
+            String worldQuery = "SELECT SUM(Population) AS TotalPop FROM country;;";
+            ResultSet rsWorld = stmt.executeQuery(worldQuery);
+            if (rsWorld.next())
+            {
+                long worldPop = rsWorld.getLong("TotalPop");
+                System.out.println(String.format("%-25s %-15d", "World Population", worldPop));
+            }
+
+            String continentQuery = "SELECT Continent, SUM(Population) AS TotalPop FROM country GROUP BY Continent ORDER BY TotalPop DESC;";
+            ResultSet rsCont = stmt.executeQuery(continentQuery);
+            System.out.println("\nPopulation by Continent");
+            System.out.println(String.format("%-20s %-15s", "Continent", "Population"));
+            while (rsCont.next())
+            {
+                String continent = rsCont.getString("Continent");
+                long pop = rsCont.getLong("TotalPop");
+                System.out.println(String.format("%-20s %-15d", continent, pop));
+            }
+
+            // Population by region
+            String regionQuery = "SELECT Region, SUM(Population) AS TotalPop FROM country GROUP BY Region ORDER BY TotalPop DESC;";
+            ResultSet rsReg = stmt.executeQuery(regionQuery);
+            System.out.println("\nPopulation by Region:");
+            System.out.println(String.format("%-30s %-15s", "Region", "Population"));
+            while (rsReg.next())
+            {
+                String region = rsReg.getString("Region");
+                long pop = rsReg.getLong("TotalPop");
+                System.out.println(String.format("%-30s %-15d", region, pop));
+            }
+
+            // Population by country
+            String countryQuery = "SELECT Name, Population FROM country ORDER BY Population DESC LIMIT 10;";
+            ResultSet rsCountry = stmt.executeQuery(countryQuery);
+            System.out.println("\nTop 10 Populous Countries:");
+            System.out.println(String.format("%-45s %-15s", "Country", "Population"));
+            while (rsCountry.next())
+            {
+                String name = rsCountry.getString("Name");
+                long pop = rsCountry.getLong("Population");
+                System.out.println(String.format("%-45s %-15d", name, pop));
+            }
+
+            // Population by district
+            String districtQuery = "SELECT District, SUM(Population) AS TotalPop FROM city GROUP BY District ORDER BY TotalPop DESC LIMIT 10;";
+            ResultSet rsDist = stmt.executeQuery(districtQuery);
+            System.out.println("\nTop 10 Districts by Population:");
+            System.out.println(String.format("%-30s %-15s", "District", "Population"));
+            while (rsDist.next())
+            {
+                String district = rsDist.getString("District");
+                long pop = rsDist.getLong("TotalPop");
+                System.out.println(String.format("%-30s %-15d", district, pop));
+            }
+
+            // Population by city
+            String cityQuery = "SELECT Name, Population FROM city ORDER BY Population DESC LIMIT 10;";
+            ResultSet rsCity = stmt.executeQuery(cityQuery);
+            System.out.println("\nTop 10 Cities by Population:");
+            System.out.println(String.format("%-45s %-15s", "City", "Population"));
+            while (rsCity.next())
+            {
+                String city = rsCity.getString("Name");
+                long pop = rsCity.getLong("Population");
+                System.out.println(String.format("%-45s %-15d", city, pop));
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to generate population report");
         }
     }
 }
