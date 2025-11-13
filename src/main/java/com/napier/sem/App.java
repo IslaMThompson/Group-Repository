@@ -20,8 +20,6 @@ public class App {
         // Displays provided ArrayList of countries.
         a.printCountries(allCountries);
 
-        a.getPopulationSummaryReport();
-
         ArrayList<Country> countriesContinent = a.getTopCountriesByContinent("Africa");
         a.printCountries(countriesContinent);
 
