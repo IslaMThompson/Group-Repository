@@ -16,12 +16,7 @@ public class App {
         }
 
         // Gets ArrayList of all countries in db.
-        ArrayList<Country> allCountries = a.getTopCountries();
-        // Displays provided ArrayList of countries.
-        a.printCountries(allCountries);
-
-        ArrayList<Country> countriesContinent = a.getTopCountriesByContinent("Africa");
-        a.printCountries(countriesContinent);
+        a.getPopulationReport();
 
         // Disconnect from database
         a.disconnect();
