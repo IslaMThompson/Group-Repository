@@ -20,7 +20,7 @@ public class App {
         // Displays provided ArrayList of countries.
         a.printCountries(allCountries);
 
-        a.getCitiesByArea();
+        a.getPopulationSummaryReport();
 
         ArrayList<Country> countriesContinent = a.getTopCountriesByContinent("Africa");
         a.printCountries(countriesContinent);
@@ -722,5 +722,133 @@ public class App {
             System.out.println("Failed to get city report");
         }
     }
+
+    /**
+     * Produces a report containing the population of an area
+     * (area name, total population, population in cities, % in cities,
+     *  population outside cities, % outside cities)
+     */
+    public void getPopulationSummaryReport()
+    {
+        try
+        {
+            Scanner in = new Scanner(System.in);
+
+            // ask the user what area type they want
+            System.out.print("Enter area type (world, continent, region, country, district): ");
+            String areaType = in.nextLine();
+
+            String areaName = "";
+
+            // only ask for name if needed
+            if (!areaType.equalsIgnoreCase("world"))
+            {
+                System.out.print("Enter the name of the " + areaType + ": ");
+                areaName = in.nextLine();
+            }
+
+            // new SQL statement
+            Statement stmt = con.createStatement();
+
+            String sqlTotal = "";
+            String sqlCity = "";
+
+            // build SQL for total population
+            if (areaType.equalsIgnoreCase("world"))
+            {
+                sqlTotal = "SELECT SUM(Population) AS TotalPop FROM country";
+                sqlCity = "SELECT SUM(ci.Population) AS CityPop "
+                        + "FROM city ci";
+            }
+            else if (areaType.equalsIgnoreCase("continent"))
+            {
+                sqlTotal = "SELECT SUM(Population) AS TotalPop "
+                        + "FROM country WHERE Continent = '" + areaName + "'";
+
+                sqlCity = "SELECT SUM(ci.Population) AS CityPop "
+                        + "FROM city ci "
+                        + "JOIN country c ON ci.CountryCode = c.Code "
+                        + "WHERE c.Continent = '" + areaName + "'";
+            }
+            else if (areaType.equalsIgnoreCase("region"))
+            {
+                sqlTotal = "SELECT SUM(Population) AS TotalPop "
+                        + "FROM country WHERE Region = '" + areaName + "'";
+
+                sqlCity = "SELECT SUM(ci.Population) AS CityPop "
+                        + "FROM city ci "
+                        + "JOIN country c ON ci.CountryCode = c.Code "
+                        + "WHERE c.Region = '" + areaName + "'";
+            }
+            else if (areaType.equalsIgnoreCase("country"))
+            {
+                sqlTotal = "SELECT Population AS TotalPop "
+                        + "FROM country WHERE Name = '" + areaName + "'";
+
+                sqlCity = "SELECT SUM(Population) AS CityPop "
+                        + "FROM city WHERE CountryCode = "
+                        + "(SELECT Code FROM country WHERE Name = '" + areaName + "')";
+            }
+            else if (areaType.equalsIgnoreCase("district"))
+            {
+                sqlTotal = "SELECT SUM(Population) AS TotalPop "
+                        + "FROM city WHERE District = '" + areaName + "'";
+
+                sqlCity = "SELECT SUM(Population) AS CityPop "
+                        + "FROM city WHERE District = '" + areaName + "'";
+            }
+            else
+            {
+                System.out.println("Invalid area type.");
+                return;
+            }
+
+            // run total pop query
+            ResultSet totalSet = stmt.executeQuery(sqlTotal);
+            long totalPop = 0;
+            if (totalSet.next())
+            {
+                totalPop = totalSet.getLong("TotalPop");
+            }
+
+            // run city pop query
+            ResultSet citySet = stmt.executeQuery(sqlCity);
+            long cityPop = 0;
+            if (citySet.next())
+            {
+                cityPop = citySet.getLong("CityPop");
+            }
+
+            // calculate outside-city population
+            long nonCityPop = totalPop - cityPop;
+
+            // calculate percentages
+            double pctCity = (totalPop == 0) ? 0 : ((double) cityPop / totalPop) * 100;
+            double pctNonCity = (totalPop == 0) ? 0 : ((double) nonCityPop / totalPop) * 100;
+
+            // print header
+            System.out.println("\n=== Population Summary Report ===\n");
+
+            if (areaType.equalsIgnoreCase("world"))
+                System.out.println("Area: World");
+            else
+                System.out.println("Area: " + areaName + " (" + areaType + ")");
+
+            // print results
+            System.out.println(String.format("%-25s %-15d", "Total Population:", totalPop));
+            System.out.println(String.format("%-25s %-15d (%.2f%%)", "In Cities:", cityPop, pctCity));
+            System.out.println(String.format("%-25s %-15d (%.2f%%)", "Outside Cities:", nonCityPop, pctNonCity));
+
+            totalSet.close();
+            citySet.close();
+            stmt.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to generate population summary report");
+        }
+    }
+
 }
 
