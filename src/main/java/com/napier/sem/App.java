@@ -75,8 +75,8 @@ public class App {
         }
     }
 
-    public City getCity(Integer id) {
-        if(id == null)
+    public City getCity(String name) {
+        if(name == null)
         {
             System.out.println("ID is null.");
             return null;
@@ -89,7 +89,7 @@ public class App {
             String strSelect =
                     "SELECT ID, Name, CountryCode, District, Population "
                             + "FROM city "
-                            + "WHERE ID = " + id;
+                            + "WHERE Name = " + name;
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Return new employee if valid.
@@ -113,8 +113,8 @@ public class App {
         }
     }
 
-    public Country getCountry(String code) {
-        if(code == null)
+    public Country getCountry(String name) {
+        if(name == null)
         {
             System.out.println("Code is null.");
             return null;
@@ -127,7 +127,7 @@ public class App {
             String strSelect =
                     "SELECT Code, Name, Continent, Region, Population, Capital "
                             + "FROM country "
-                            + "WHERE Code = '" + code + "'";
+                            + "WHERE Name = '" + name + "'";
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Return new employee if valid.
