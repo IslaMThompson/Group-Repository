@@ -1,9 +1,5 @@
 name: App Build & Testing
-on:
-  push:
-    branches:
-      - master
-      - feature/integration-tests
+on: push
 jobs:
   UnitTests:
     name: Unit Tests
