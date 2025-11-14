@@ -2,8 +2,11 @@ package com.napier.sem;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IntegrationTests
 {
@@ -13,47 +16,33 @@ public class IntegrationTests
     static void init()
     {
         app = new App();
+        app.connect("localhost:33060", 30000);
+
     }
 
     @Test
-    void getCityTestNull()
+    void testGetCountry()
     {
-        app.getCity(null);
+        Country country = app.getCountry("ARM");
+
+        assertEquals(country.code, "ARM");
+        assertEquals(country.name, "Armenia");
+        assertEquals(country.continent, "Asia");
+        assertEquals(country.region, "Middle East");
+        assertEquals(country.population, 3520000);
+        assertEquals(country.capital, 126);
+
     }
 
     @Test
-    void getCountryTestNull()
+    void testGetCity()
     {
-        app.getCountry(null);
+        City city = app.getCity(460);
+
+        assertEquals(city.id, 460);
+        assertEquals(city.name, "Edinburgh");
+        assertEquals(city.country_code, "GBR");
+        assertEquals(city.district, "Scotland");
+        assertEquals(city.population, 450180);
     }
-
-    @Test
-    void displayCountryTestNull()
-    {
-        Country nullCountry = app.getCountry(null);
-        app.displayCountry(nullCountry);
-    }
-
-    @Test
-    void getCountriesByAreaTestNull()
-    {
-        app.getAllCountries();
-        app.getCountriesByContinent(null);
-        app.getCountriesByRegion(null);
-    }
-
-    @Test
-    void printCountriesTestNull()
-    {
-        app.printCountries(null);
-    }
-
-    @Test
-    void printCountriesTestEmpty()
-    {
-        ArrayList<Country> countries = new ArrayList<Country>();
-        app.printCountries(countries);
-    }
-
-
 }
