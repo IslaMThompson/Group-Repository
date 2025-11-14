@@ -15,9 +15,6 @@ public class App {
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
-        // Gets ArrayList of all countries in db.
-        a.getPopulationReport();
-
         // Disconnect from database
         a.disconnect();
     }
@@ -75,6 +72,11 @@ public class App {
         }
     }
 
+    /**
+     * Retrieve specified city details.
+     * @param name - String for selected city name
+     * @return city
+     */
     public City getCity(String name) {
         if(name == null)
         {
@@ -113,6 +115,11 @@ public class App {
         }
     }
 
+    /**
+     * Retrieve specified country details.
+     * @param name - String for selected country name
+     * @return
+     */
     public Country getCountry(String name) {
         if(name == null)
         {
@@ -151,6 +158,10 @@ public class App {
         }
     }
 
+    /**
+     * Displays a single country variables details.
+     * @param country - Country variable to be displayed
+     */
     public static void displayCountry(Country country) {
         if (country != null) {
             System.out.println(
@@ -166,6 +177,10 @@ public class App {
         }
     }
 
+    /**
+     * Retrieves details for all countries and stores them in an ArrayList.
+     * @return countries
+     */
     public ArrayList<Country> getAllCountries() {
         try {
             Statement stmt = con.createStatement();
@@ -195,6 +210,11 @@ public class App {
         }
     }
 
+    /**
+     * Retrieves details for all countries in specified continent and stores them in an ArrayList.
+     * @param continent - String for continent to filter by
+     * @return countries
+     */
     public ArrayList<Country> getCountriesByContinent(String continent) {
         if(continent == null)
         {
@@ -231,6 +251,11 @@ public class App {
         }
     }
 
+    /**
+     * Retrieves details for all countries for specified region and stores them in an ArrayList.
+     * @param region - String for region to filter by
+     * @return countries
+     */
     public ArrayList<Country> getCountriesByRegion(String region) {
         if(region == null)
         {
@@ -266,14 +291,20 @@ public class App {
         }
     }
 
+    /**
+     * Returns ArrayList of top 'n' countries (where 'n' is user-input)
+     * @return countries
+     */
     public ArrayList<Country> getTopCountries() {
         try {
             Statement stmt = con.createStatement();
 
+            // Get user input
             Scanner lineRead = new Scanner(System.in);
             System.out.print("Enter Number Of Lines To Output: ");
             Integer n = lineRead.nextInt();
 
+            // Check if input is null
             if(n == null)
             {
                 System.out.println("Line input is null");
@@ -306,6 +337,11 @@ public class App {
         }
     }
 
+    /**
+     * Returns ArrayList of top 'n' countries in specified continent (where 'n' is user-input)
+     * @param continent - String for continent to filter by
+     * @return countries
+     */
     public ArrayList<Country> getTopCountriesByContinent(String continent) {
         if(continent == null)
         {
@@ -347,6 +383,11 @@ public class App {
         }
     }
 
+    /**
+     * Returns ArrayList of top 'n' countries in specified region (where 'n' is user-input)
+     * @param region - String for region to filter by
+     * @return countries
+     */
     public ArrayList<Country> getTopCountriesByRegion(String region) {
         if(region == null)
         {
