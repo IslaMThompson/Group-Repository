@@ -75,7 +75,13 @@ public class App {
         }
     }
 
-    public City getCity(int ID) {
+    public City getCity(Integer id) {
+        if(id == null)
+        {
+            System.out.println("ID is null.");
+            return null;
+        }
+
         try {
             // Create an SQL statement
             Statement stmt = con.createStatement();
@@ -83,7 +89,7 @@ public class App {
             String strSelect =
                     "SELECT ID, Name, CountryCode, District, Population "
                             + "FROM city "
-                            + "WHERE ID = " + ID;
+                            + "WHERE ID = " + id;
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Return new employee if valid.
@@ -108,6 +114,12 @@ public class App {
     }
 
     public Country getCountry(String code) {
+        if(code == null)
+        {
+            System.out.println("Code is null.");
+            return null;
+        }
+
         try {
             // Create an SQL statement
             Statement stmt = con.createStatement();
@@ -149,6 +161,9 @@ public class App {
                             + "Population: " + country.population + "\n"
                             + "Capital: " + country.capital + "\n");
         }
+        else{
+            System.out.println("Country is null");
+        }
     }
 
     public ArrayList<Country> getAllCountries() {
@@ -181,6 +196,12 @@ public class App {
     }
 
     public ArrayList<Country> getCountriesByContinent(String continent) {
+        if(continent == null)
+        {
+            System.out.println("Continent is null");
+            return null;
+        }
+
         try {
             Statement stmt = con.createStatement();
 
@@ -211,6 +232,11 @@ public class App {
     }
 
     public ArrayList<Country> getCountriesByRegion(String region) {
+        if(region == null)
+        {
+            System.out.println("Region is null");
+            return null;
+        }
         try {
             Statement stmt = con.createStatement();
 
@@ -246,7 +272,13 @@ public class App {
 
             Scanner lineRead = new Scanner(System.in);
             System.out.print("Enter Number Of Lines To Output: ");
-            int n = lineRead.nextInt();
+            Integer n = lineRead.nextInt();
+
+            if(n == null)
+            {
+                System.out.println("Line input is null");
+                return null;
+            }
 
             String strSelect = "SELECT Code, Name, Continent, Region, Population, Capital " +
                     "FROM country " +
@@ -275,6 +307,12 @@ public class App {
     }
 
     public ArrayList<Country> getTopCountriesByContinent(String continent) {
+        if(continent == null)
+        {
+            System.out.println("Continent is null");
+            return null;
+        }
+
         try {
             Statement stmt = con.createStatement();
 
@@ -310,6 +348,12 @@ public class App {
     }
 
     public ArrayList<Country> getTopCountriesByRegion(String region) {
+        if(region == null)
+        {
+            System.out.println("Region is null");
+            return null;
+        }
+
         try {
             Statement stmt = con.createStatement();
 
@@ -352,6 +396,11 @@ public class App {
     public void printCountries(ArrayList<Country> countries) {
         // Check employees is not null.
         if (countries == null) {
+            System.out.println("No countries in list.");
+            return;
+        }
+        else if(countries.isEmpty())
+        {
             System.out.println("No countries in list.");
             return;
         }
