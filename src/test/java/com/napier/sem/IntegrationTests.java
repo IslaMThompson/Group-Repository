@@ -23,7 +23,7 @@ public class IntegrationTests
     @Test
     void testGetCountry()
     {
-        Country country = app.getCountry("ARM");
+        Country country = app.getCountry("Armenia");
 
         assertEquals(country.code, "ARM");
         assertEquals(country.name, "Armenia");
@@ -37,7 +37,7 @@ public class IntegrationTests
     @Test
     void testGetCity()
     {
-        City city = app.getCity(460);
+        City city = app.getCity("Edinburgh");
 
         assertEquals(city.id, 460);
         assertEquals(city.name, "Edinburgh");
