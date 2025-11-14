@@ -78,7 +78,7 @@ public class App {
     public City getCity(String name) {
         if(name == null)
         {
-            System.out.println("ID is null.");
+            System.out.println("Name is null.");
             return null;
         }
 
@@ -89,7 +89,7 @@ public class App {
             String strSelect =
                     "SELECT ID, Name, CountryCode, District, Population "
                             + "FROM city "
-                            + "WHERE Name = " + name;
+                            + "WHERE Name = '" + name + "';";
             // Execute SQL statement
             ResultSet rset = stmt.executeQuery(strSelect);
             // Return new employee if valid.
