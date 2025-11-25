@@ -1,9 +1,6 @@
 name: App Build & Testing
 on:
-  push:
-    branches:
-      - master
-      - feature/codecov
+  push
 jobs:
   UnitTests:
     name: Unit Tests
