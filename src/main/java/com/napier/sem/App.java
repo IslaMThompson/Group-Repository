@@ -66,8 +66,16 @@ public class App {
                                 a.printCountries(allCountries);
                                 break;
                             case 2:
+                                System.out.print("\nEnter Continent: ");
+                                String continentName = input.next();
+                                ArrayList<Country> countriesByContinent = a.getCountriesByContinent(continentName);
+                                a.printCountries(countriesByContinent);
                                 break;
                             case 3:
+                                System.out.print("\nEnter Regi1on: ");
+                                String regionName = input.next();
+                                ArrayList<Country> countriesByRegion = a.getCountriesByRegion(regionName);
+                                a.printCountries(countriesByRegion);
                                 break;
                             case 4:
                                 System.out.print("\nEnter Country Name: ");
