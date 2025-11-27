@@ -463,48 +463,60 @@ public class App {
      * Prints a report of total speakers of specific languages
      * (Chinese, English, Hindi, Spanish), ordered from highest to lowest
      */
-    public void getLanguageReport() {
+    public ArrayList<CountryLanguage> getLanguageReport() {
+        ArrayList<CountryLanguage> reports = new ArrayList<>();
+
         try {
-            // new sql statement obj
             Statement stmt = con.createStatement();
 
-            // joining countryLanguage and country to combine the language and population data
-            // filters through only the specified languages
             String strSelect =
                     "SELECT cl.Language, " +
                             "       SUM((c.Population * cl.Percentage) / 100) AS TotalSpeakers, " +
-                            "       (SUM((c.Population * cl.Percentage) / 100) / (SELECT SUM(Population) FROM country)) * 100 AS WorldPercentage " +
+                            "       (SUM((c.Population * cl.Percentage) / 100) / " +
+                            "        (SELECT SUM(Population) FROM country)) * 100 AS WorldPercentage " +
                             "FROM countrylanguage cl " +
                             "JOIN country c ON c.Code = cl.CountryCode " +
                             "WHERE cl.Language IN ('Chinese', 'English', 'Hindi', 'Spanish', 'Arabic') " +
                             "GROUP BY cl.Language " +
                             "ORDER BY TotalSpeakers DESC;";
 
-            // execute the query and store the results
             ResultSet rset = stmt.executeQuery(strSelect);
 
-            // formatting the table header
-            System.out.println(String.format("%-15s %-20s %-15s", "Language", "Total Speakers", "World %"));
-
-            // iterating through each record in the result set
             while (rset.next()) {
-                // extracting data from each column
-                String language = rset.getString("Language");
-                long totalSpeakers = rset.getLong("TotalSpeakers");
-                double worldPercentage = rset.getDouble("WorldPercentage");
-
-                // printing using the format
-                System.out.println(String.format("%-15s %-20d %-15.2f", language, totalSpeakers, worldPercentage));
+                CountryLanguage cl = new CountryLanguage();
+                cl.language = rset.getString("Language");
+                // reuse percentage field as "world percentage of speakers"
+                cl.percentage = rset.getDouble("WorldPercentage");
+                reports.add(cl);
             }
 
-            // closing the result set and statement
             rset.close();
             stmt.close();
         } catch (Exception e) {
-            // print the specific sql error message
             System.out.println(e.getMessage());
-            // print user friendly error message
             System.out.println("Failed to get language report");
+        }
+
+        return reports;
+    }
+
+    /**
+     * Prints a list of language reports.
+     */
+    public void printLanguageReport(ArrayList<CountryLanguage> reports) {
+        if (reports == null || reports.isEmpty()) {
+            System.out.println("No language data.");
+            return;
+        }
+
+        System.out.println(String.format("%-15s %-20s %-15s", "Language", "Total Speakers", "World %"));
+
+        for (CountryLanguage cl : reports) {
+            if (cl == null)
+                continue;
+
+            System.out.println(String.format("%-15s %-20s %-15.2f",
+                    cl.language, "-", cl.percentage));
         }
     }
 
@@ -693,335 +705,352 @@ public class App {
      * Asks the user what area they want to produce a city report for
      * (world, continent, region, country, district) and prints the top cities.
      */
-    public void getCitiesByArea()
-    {
-        try
-        {
-            Scanner in = new Scanner(System.in);
+    public ArrayList<City> getCitiesByArea(String areaType, String areaName, int limit) {
+        if (areaType == null || limit <= 0)
+            return null;
 
-            // ask area type
-            System.out.print("Enter area type (world, continent, region, country, district): ");
-            String areaType = in.nextLine();
+        ArrayList<City> cities = new ArrayList<>();
 
-            String areaName = "";
-
-            // ask for area name only if needed
-            if (!areaType.equalsIgnoreCase("world"))
-            {
-                System.out.print("Enter the name of the " + areaType + ": ");
-                areaName = in.nextLine();
-            }
-
-            // ask how many cities to output
-            System.out.print("Enter number of cities to display: ");
-            int n = in.nextInt();
-
-            // create SQL statement
+        try {
             Statement stmt = con.createStatement();
             String sql;
 
-            // build SQL based on area type
-            if (areaType.equalsIgnoreCase("world"))
-            {
-                sql = "SELECT ci.Name, ci.District, ci.Population, c.Name AS Country "
-                        + "FROM city ci "
-                        + "JOIN country c ON ci.CountryCode = c.Code "
-                        + "ORDER BY ci.Population DESC "
-                        + "LIMIT " + n;
-            }
-            else if (areaType.equalsIgnoreCase("continent"))
-            {
-                sql = "SELECT ci.Name, ci.District, ci.Population, c.Name AS Country "
-                        + "FROM city ci "
-                        + "JOIN country c ON ci.CountryCode = c.Code "
-                        + "WHERE c.Continent = '" + areaName + "' "
-                        + "ORDER BY ci.Population DESC "
-                        + "LIMIT " + n;
-            }
-            else if (areaType.equalsIgnoreCase("region"))
-            {
-                sql = "SELECT ci.Name, ci.District, ci.Population, c.Name AS Country "
-                        + "FROM city ci "
-                        + "JOIN country c ON ci.CountryCode = c.Code "
-                        + "WHERE c.Region = '" + areaName + "' "
-                        + "ORDER BY ci.Population DESC "
-                        + "LIMIT " + n;
-            }
-            else if (areaType.equalsIgnoreCase("country"))
-            {
-                sql = "SELECT ci.Name, ci.District, ci.Population, c.Name AS Country "
-                        + "FROM city ci "
-                        + "JOIN country c ON ci.CountryCode = c.Code "
-                        + "WHERE c.Name = '" + areaName + "' "
-                        + "ORDER BY ci.Population DESC "
-                        + "LIMIT " + n;
-            }
-            else if (areaType.equalsIgnoreCase("district"))
-            {
-                sql = "SELECT Name, District, Population, CountryCode "
-                        + "FROM city "
-                        + "WHERE District = '" + areaName + "' "
-                        + "ORDER BY Population DESC "
-                        + "LIMIT " + n;
-            }
-            else
-            {
-                System.out.println("Invalid area type.");
-                return;
+            if (areaType.equalsIgnoreCase("world")) {
+                sql = "SELECT ci.ID, ci.Name, ci.CountryCode, ci.District, ci.Population, c.Name AS Country " +
+                        "FROM city ci " +
+                        "JOIN country c ON ci.CountryCode = c.Code " +
+                        "ORDER BY ci.Population DESC " +
+                        "LIMIT " + limit;
+            } else if (areaType.equalsIgnoreCase("continent")) {
+                sql = "SELECT ci.ID, ci.Name, ci.CountryCode, ci.District, ci.Population, c.Name AS Country " +
+                        "FROM city ci " +
+                        "JOIN country c ON ci.CountryCode = c.Code " +
+                        "WHERE c.Continent = '" + areaName + "' " +
+                        "ORDER BY ci.Population DESC " +
+                        "LIMIT " + limit;
+            } else if (areaType.equalsIgnoreCase("region")) {
+                sql = "SELECT ci.ID, ci.Name, ci.CountryCode, ci.District, ci.Population, c.Name AS Country " +
+                        "FROM city ci " +
+                        "JOIN country c ON ci.CountryCode = c.Code " +
+                        "WHERE c.Region = '" + areaName + "' " +
+                        "ORDER BY ci.Population DESC " +
+                        "LIMIT " + limit;
+            } else if (areaType.equalsIgnoreCase("country")) {
+                sql = "SELECT ci.ID, ci.Name, ci.CountryCode, ci.District, ci.Population, c.Name AS Country " +
+                        "FROM city ci " +
+                        "JOIN country c ON ci.CountryCode = c.Code " +
+                        "WHERE c.Name = '" + areaName + "' " +
+                        "ORDER BY ci.Population DESC " +
+                        "LIMIT " + limit;
+            } else if (areaType.equalsIgnoreCase("district")) {
+                sql = "SELECT ID, Name, CountryCode, District, Population " +
+                        "FROM city " +
+                        "WHERE District = '" + areaName + "' " +
+                        "ORDER BY Population DESC " +
+                        "LIMIT " + limit;
+            } else {
+                return null;
             }
 
-            // run query
             ResultSet rset = stmt.executeQuery(sql);
 
-            // print header
-            System.out.println(String.format("%-40s %-25s %-15s %-20s",
-                    "City", "District", "Population", "Country"));
-
-            // print cities
-            while (rset.next())
-            {
-                String city = rset.getString("Name");
-                String district = rset.getString("District");
-                int pop = rset.getInt("Population");
-
-                String country;
+            while (rset.next()) {
+                City city = new City();
+                city.id = rset.getInt("ID");
+                city.name = rset.getString("Name");
+                city.country_code = rset.getString("CountryCode");
+                city.district = rset.getString("District");
+                city.population = rset.getInt("Population");
                 try {
-                    country = rset.getString("Country");
+                    city.country = rset.getString("Country");
                 } catch (Exception e) {
-                    country = rset.getString("CountryCode");
+                    city.country = null;
                 }
-
-                System.out.println(String.format("%-40s %-25s %-15d %-20s",
-                        city, district, pop, country));
+                cities.add(city);
             }
 
             rset.close();
             stmt.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city report");
+            return null;
         }
-        catch (Exception e)
-        {
+
+        return cities;
+    }
+
+    public void printCities(ArrayList<City> cities) {
+        if (cities == null || cities.isEmpty()) {
+            System.out.println("No cities to display.");
+            return;
+        }
+
+        System.out.println(String.format("%-40s %-25s %-15s %-20s",
+                "City", "District", "Population", "Country"));
+
+        for (City city : cities) {
+            if (city == null)
+                continue;
+
+            System.out.println(String.format("%-40s %-25s %-15d %-20s",
+                    city.name,
+                    city.district,
+                    city.population,
+                    city.country != null ? city.country : city.country_code));
+        }
+    }
+
+    public void getCitiesByArea() {
+        try {
+            Scanner in = new Scanner(System.in);
+
+            System.out.print("Enter area type (world, continent, region, country, district): ");
+            String areaType = in.nextLine();
+
+            String areaName = "";
+            if (!areaType.equalsIgnoreCase("world")) {
+                System.out.print("Enter the name of the " + areaType + ": ");
+                areaName = in.nextLine();
+            }
+
+            System.out.print("Enter number of cities to display: ");
+            int n = in.nextInt();
+
+            ArrayList<City> cities = getCitiesByArea(areaType, areaName, n);
+            printCities(cities);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("Failed to get city report");
         }
     }
 
+
     /**
      * Produces a report containing the population of an area
      * (area name, total population, population in cities, % in cities,
-     *  population outside cities, % outside cities)
+     * population outside cities, % outside cities)
      */
-    public void getPopulationSummaryReport()
-    {
-        try
-        {
-            Scanner in = new Scanner(System.in);
+    public PopulationSummary getPopulationSummary(String areaType, String areaName) {
+        if (areaType == null)
+            return null;
 
-            // ask the user what area type they want
-            System.out.print("Enter area type (world, continent, region, country, district): ");
-            String areaType = in.nextLine();
+        PopulationSummary ps = new PopulationSummary();
+        ps.areaType = areaType;
+        ps.areaName = areaName;
 
-            String areaName = "";
-
-            // only ask for name if needed
-            if (!areaType.equalsIgnoreCase("world"))
-            {
-                System.out.print("Enter the name of the " + areaType + ": ");
-                areaName = in.nextLine();
-            }
-
-            // new SQL statement
+        try {
             Statement stmt = con.createStatement();
-
             String sqlTotal = "";
             String sqlCity = "";
 
-            // build SQL for total population
-            if (areaType.equalsIgnoreCase("world"))
-            {
-                sqlTotal = "SELECT SUM(Population) AS TotalPop FROM country";
-                sqlCity = "SELECT SUM(ci.Population) AS CityPop "
-                        + "FROM city ci";
-            }
-            else if (areaType.equalsIgnoreCase("continent"))
-            {
-                sqlTotal = "SELECT SUM(Population) AS TotalPop "
-                        + "FROM country WHERE Continent = '" + areaName + "'";
+            switch (areaType.toLowerCase()) {
+                case "world":
+                    sqlTotal = "SELECT SUM(Population) AS TotalPop FROM country";
+                    sqlCity = "SELECT SUM(Population) AS CityPop FROM city";
+                    break;
 
-                sqlCity = "SELECT SUM(ci.Population) AS CityPop "
-                        + "FROM city ci "
-                        + "JOIN country c ON ci.CountryCode = c.Code "
-                        + "WHERE c.Continent = '" + areaName + "'";
-            }
-            else if (areaType.equalsIgnoreCase("region"))
-            {
-                sqlTotal = "SELECT SUM(Population) AS TotalPop "
-                        + "FROM country WHERE Region = '" + areaName + "'";
+                case "continent":
+                    sqlTotal = "SELECT SUM(Population) AS TotalPop FROM country WHERE Continent = '" + areaName + "'";
+                    sqlCity = "SELECT SUM(ci.Population) AS CityPop " +
+                            "FROM city ci JOIN country c ON ci.CountryCode = c.Code " +
+                            "WHERE c.Continent = '" + areaName + "'";
+                    break;
 
-                sqlCity = "SELECT SUM(ci.Population) AS CityPop "
-                        + "FROM city ci "
-                        + "JOIN country c ON ci.CountryCode = c.Code "
-                        + "WHERE c.Region = '" + areaName + "'";
-            }
-            else if (areaType.equalsIgnoreCase("country"))
-            {
-                sqlTotal = "SELECT Population AS TotalPop "
-                        + "FROM country WHERE Name = '" + areaName + "'";
+                case "region":
+                    sqlTotal = "SELECT SUM(Population) AS TotalPop FROM country WHERE Region = '" + areaName + "'";
+                    sqlCity = "SELECT SUM(ci.Population) AS CityPop " +
+                            "FROM city ci JOIN country c ON ci.CountryCode = c.Code " +
+                            "WHERE c.Region = '" + areaName + "'";
+                    break;
 
-                sqlCity = "SELECT SUM(Population) AS CityPop "
-                        + "FROM city WHERE CountryCode = "
-                        + "(SELECT Code FROM country WHERE Name = '" + areaName + "')";
-            }
-            else if (areaType.equalsIgnoreCase("district"))
-            {
-                sqlTotal = "SELECT SUM(Population) AS TotalPop "
-                        + "FROM city WHERE District = '" + areaName + "'";
+                case "country":
+                    sqlTotal = "SELECT Population AS TotalPop FROM country WHERE Name = '" + areaName + "'";
+                    sqlCity = "SELECT SUM(Population) AS CityPop " +
+                            "FROM city WHERE CountryCode = (SELECT Code FROM country WHERE Name = '" + areaName + "')";
+                    break;
 
-                sqlCity = "SELECT SUM(Population) AS CityPop "
-                        + "FROM city WHERE District = '" + areaName + "'";
-            }
-            else
-            {
-                System.out.println("Invalid area type.");
-                return;
+                case "district":
+                    sqlTotal = "SELECT SUM(Population) AS TotalPop FROM city WHERE District = '" + areaName + "'";
+                    sqlCity = "SELECT SUM(Population) AS CityPop FROM city WHERE District = '" + areaName + "'";
+                    break;
+
+                default:
+                    return null;
             }
 
-            // run total pop query
             ResultSet totalSet = stmt.executeQuery(sqlTotal);
-            long totalPop = 0;
             if (totalSet.next())
-            {
-                totalPop = totalSet.getLong("TotalPop");
-            }
+                ps.totalPop = totalSet.getLong("TotalPop");
 
-            // run city pop query
             ResultSet citySet = stmt.executeQuery(sqlCity);
-            long cityPop = 0;
             if (citySet.next())
-            {
-                cityPop = citySet.getLong("CityPop");
-            }
+                ps.cityPop = citySet.getLong("CityPop");
 
-            // calculate outside-city population
-            long nonCityPop = totalPop - cityPop;
-
-            // calculate percentages
-            double pctCity = (totalPop == 0) ? 0 : ((double) cityPop / totalPop) * 100;
-            double pctNonCity = (totalPop == 0) ? 0 : ((double) nonCityPop / totalPop) * 100;
-
-            // print header
-            System.out.println("\n=== Population Summary Report ===\n");
-
-            if (areaType.equalsIgnoreCase("world"))
-                System.out.println("Area: World");
-            else
-                System.out.println("Area: " + areaName + " (" + areaType + ")");
-
-            // print results
-            System.out.println(String.format("%-25s %-15d", "Total Population:", totalPop));
-            System.out.println(String.format("%-25s %-15d (%.2f%%)", "In Cities:", cityPop, pctCity));
-            System.out.println(String.format("%-25s %-15d (%.2f%%)", "Outside Cities:", nonCityPop, pctNonCity));
+            ps.nonCityPop = ps.totalPop - ps.cityPop;
+            ps.pctCity = (ps.totalPop == 0) ? 0 : ((double) ps.cityPop / ps.totalPop) * 100;
+            ps.pctNonCity = (ps.totalPop == 0) ? 0 : ((double) ps.nonCityPop / ps.totalPop) * 100;
 
             totalSet.close();
             citySet.close();
             stmt.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get population summary");
+            return null;
         }
-        catch (Exception e)
-        {
+
+        return ps;
+    }
+
+    public void printPopulationSummary(PopulationSummary ps) {
+        if (ps == null) {
+            System.out.println("No summary available.");
+            return;
+        }
+
+        System.out.println("\n=== Population Summary Report ===\n");
+
+        if (ps.areaType.equalsIgnoreCase("world"))
+            System.out.println("Area: World");
+        else
+            System.out.println("Area: " + ps.areaName + " (" + ps.areaType + ")");
+
+        System.out.println(String.format("%-25s %-15d", "Total Population:", ps.totalPop));
+        System.out.println(String.format("%-25s %-15d (%.2f%%)", "In Cities:", ps.cityPop, ps.pctCity));
+        System.out.println(String.format("%-25s %-15d (%.2f%%)", "Outside Cities:", ps.nonCityPop, ps.pctNonCity));
+    }
+
+    public void getPopulationSummaryReport() {
+        try {
+            Scanner in = new Scanner(System.in);
+
+            System.out.print("Enter area type (world, continent, region, country, district): ");
+            String areaType = in.nextLine();
+
+            String areaName = "";
+            if (!areaType.equalsIgnoreCase("world")) {
+                System.out.print("Enter the name of the " + areaType + ": ");
+                areaName = in.nextLine();
+            }
+
+            PopulationSummary ps = getPopulationSummary(areaType, areaName);
+            printPopulationSummary(ps);
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println("Failed to generate population summary report");
         }
     }
 
+
     /**
      * Produces a report of capital cities in a given area
      * (world, continent, or region) sorted by population (highest → lowest).
      */
+    public ArrayList<City> getCapitalCities(String areaType, String areaName, int limit) {
+        if (areaType == null || limit <= 0)
+            return null;
+
+        ArrayList<City> capitals = new ArrayList<>();
+
+        try {
+            Statement stmt = con.createStatement();
+            String query;
+
+            if (areaType.equalsIgnoreCase("world")) {
+                query =
+                        "SELECT city.ID, city.Name AS Capital, country.Name AS Country, city.Population, city.CountryCode, city.District " +
+                                "FROM city " +
+                                "JOIN country ON city.ID = country.Capital " +
+                                "ORDER BY city.Population DESC " +
+                                "LIMIT " + limit + ";";
+            } else if (areaType.equalsIgnoreCase("continent")) {
+                query =
+                        "SELECT city.ID, city.Name AS Capital, country.Name AS Country, city.Population, city.CountryCode, city.District " +
+                                "FROM city " +
+                                "JOIN country ON city.ID = country.Capital " +
+                                "WHERE country.Continent = '" + areaName + "' " +
+                                "ORDER BY city.Population DESC " +
+                                "LIMIT " + limit + ";";
+            } else if (areaType.equalsIgnoreCase("region")) {
+                query =
+                        "SELECT city.ID, city.Name AS Capital, country.Name AS Country, city.Population, city.CountryCode, city.District " +
+                                "FROM city " +
+                                "JOIN country ON city.ID = country.Capital " +
+                                "WHERE country.Region = '" + areaName + "' " +
+                                "ORDER BY city.Population DESC " +
+                                "LIMIT " + limit + ";";
+            } else {
+                return null;
+            }
+
+            ResultSet rset = stmt.executeQuery(query);
+
+            while (rset.next()) {
+                City c = new City();
+                c.id = rset.getInt("ID");
+                c.name = rset.getString("Capital");
+                c.country = rset.getString("Country");
+                c.population = rset.getInt("Population");
+                c.country_code = rset.getString("CountryCode");
+                c.district = rset.getString("District");
+                capitals.add(c);
+            }
+
+            rset.close();
+            stmt.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get capital cities report");
+            return null;
+        }
+
+        return capitals;
+    }
+
+    public void printCapitalCities(ArrayList<City> capitals)
+    {
+        if (capitals == null || capitals.isEmpty())
+        {
+            System.out.println("No capital cities to display.");
+            return;
+        }
+
+        System.out.println("\n=== Capital Cities Report ===\n");
+        System.out.println(String.format("%-35s %-35s %-15s",
+                "Capital City", "Country", "Population"));
+
+        for (City c : capitals)
+        {
+            if (c == null)
+                continue;
+
+            System.out.println(String.format("%-35s %-35s %-15d",
+                    c.name, c.country, c.population));
+        }
+    }
+
     public void getCapitalCitiesReport()
     {
         try
         {
             Scanner in = new Scanner(System.in);
 
-            // ask area type
             System.out.print("Enter area type (world, continent, region): ");
             String areaType = in.nextLine();
 
             String areaName = "";
-
-            // only ask for name if needed
             if (!areaType.equalsIgnoreCase("world"))
             {
                 System.out.print("Enter the name of the " + areaType + ": ");
                 areaName = in.nextLine();
             }
 
-            // ask for number of capitals to display
             System.out.print("Enter number of capital cities to display: ");
             int n = in.nextInt();
 
-            // new SQL statement
-            Statement stmt = con.createStatement();
-            String query = "";
-
-            // world
-            if (areaType.equalsIgnoreCase("world"))
-            {
-                query =
-                        "SELECT city.Name AS Capital, country.Name AS Country, city.Population " +
-                                "FROM city " +
-                                "JOIN country ON city.ID = country.Capital " +
-                                "ORDER BY city.Population DESC " +
-                                "LIMIT " + n + ";";
-            }
-            // continent
-            else if (areaType.equalsIgnoreCase("continent"))
-            {
-                query =
-                        "SELECT city.Name AS Capital, country.Name AS Country, city.Population " +
-                                "FROM city " +
-                                "JOIN country ON city.ID = country.Capital " +
-                                "WHERE country.Continent = '" + areaName + "' " +
-                                "ORDER BY city.Population DESC " +
-                                "LIMIT " + n + ";";
-            }
-            // region
-            else if (areaType.equalsIgnoreCase("region"))
-            {
-                query =
-                        "SELECT city.Name AS Capital, country.Name AS Country, city.Population " +
-                                "FROM city " +
-                                "JOIN country ON city.ID = country.Capital " +
-                                "WHERE country.Region = '" + areaName + "' " +
-                                "ORDER BY city.Population DESC " +
-                                "LIMIT " + n + ";";
-            }
-            else
-            {
-                System.out.println("Invalid area type.");
-                return;
-            }
-
-            // run query
-            ResultSet rset = stmt.executeQuery(query);
-
-            // header
-            System.out.println("\n=== Capital Cities Report ===\n");
-            System.out.println(String.format("%-35s %-35s %-15s",
-                    "Capital City", "Country", "Population"));
-
-            // results
-            while (rset.next())
-            {
-                String capital = rset.getString("Capital");
-                String country = rset.getString("Country");
-                int pop = rset.getInt("Population");
-
-                System.out.println(String.format("%-35s %-35s %-15d",
-                        capital, country, pop));
-            }
-
-            rset.close();
-            stmt.close();
+            ArrayList<City> capitals = getCapitalCities(areaType, areaName, n);
+            printCapitalCities(capitals);
         }
         catch (Exception e)
         {

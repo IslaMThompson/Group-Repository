@@ -55,5 +55,71 @@ public class UnitTests
         app.printCountries(countries);
     }
 
+    @Test
+    void printLanguageReportTestNull()
+    {
+        app.printLanguageReport(null);
+    }
+
+    @Test
+    void printLanguageReportTestEmpty()
+    {
+        ArrayList<CountryLanguage> reports = new ArrayList<CountryLanguage>();
+        app.printLanguageReport(reports);
+    }
+
+    @Test
+    void getCitiesByAreaTestNullParams()
+    {
+        // null areaType
+        app.getCitiesByArea(null, "Europe", 10);
+        // zero / negative limit
+        app.getCitiesByArea("world", "Europe", 0);
+    }
+
+    @Test
+    void printCitiesTestNull()
+    {
+        app.printCities(null);
+    }
+
+    @Test
+    void printCitiesTestEmpty()
+    {
+        ArrayList<City> cities = new ArrayList<City>();
+        app.printCities(cities);
+    }
+
+    @Test
+    void getPopulationSummaryTestNull()
+    {
+        app.getPopulationSummary(null, "Europe");
+    }
+
+    @Test
+    void printPopulationSummaryTestNull()
+    {
+        app.printPopulationSummary(null);
+    }
+
+    @Test
+    void getCapitalCitiesTestNullParams()
+    {
+        app.getCapitalCities(null, "Europe", 10);
+        app.getCapitalCities("world", "Europe", 0);
+    }
+
+    @Test
+    void printCapitalCitiesTestNull()
+    {
+        app.printCapitalCities(null);
+    }
+
+    @Test
+    void printCapitalCitiesTestEmpty() {
+        ArrayList<City> capitals = new ArrayList<City>();
+        app.printCapitalCities(capitals);
+    }
+
 
 }
