@@ -15,6 +15,75 @@ public class App {
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
+        Scanner input = new Scanner(System.in);
+        int choice = 0;
+
+        do
+        {
+            System.out.println("\nMAIN MENU");
+            System.out.println("---------");
+            System.out.println("1. Get Country Report");
+            System.out.println("2. Get Region Report");
+            System.out.println("3. Get City Report");
+            System.out.println("4. Exit");
+
+            System.out.print("User Choice: ");
+
+            while (!input.hasNextInt()) {
+                System.out.print("User Choice: ");
+                input.next();
+            }
+
+            choice = input.nextInt();
+
+            switch(choice)
+            {
+                case 1:
+                    int country_choice = 0;
+                    do {
+                        System.out.println("\nCOUNTRY MENU");
+                        System.out.println("------------");
+                        System.out.println("1. Print All Countries");
+                        System.out.println("2. Print Countries By Continent");
+                        System.out.println("3. Print Countries By Region");
+                        System.out.println("4. Print Single Country");
+                        System.out.println("5. BACK");
+
+                        System.out.print("User Choice: ");
+
+                        while (!input.hasNextInt()) {
+                            System.out.print("User Choice: ");
+                            input.next();
+                        }
+
+                        country_choice = input.nextInt();
+
+                        switch(country_choice)
+                        {
+                            case 1:
+                                System.out.println("\nAll Countries");
+                                ArrayList<Country> allCountries = a.getAllCountries();
+                                a.printCountries(allCountries);
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                System.out.print("\nEnter Country Name: ");
+                                String countryName = input.next();
+                                Country country = a.getCountry(countryName);
+                                a.displayCountry(country);
+                                break;
+                        }
+                    } while(country_choice != 5);
+                    if(country_choice == 5)
+                    {
+                        System.out.println("Exiting Country Menu...");
+                    }
+            }
+        } while (choice != 4);
+
         // Disconnect from database
         a.disconnect();
     }
