@@ -25,7 +25,10 @@ public class App {
             System.out.println("1. Get Country Report");
             System.out.println("2. Get Region Report");
             System.out.println("3. Get City Report");
-            System.out.println("4. Exit");
+            System.out.println("4. Get Capital City Report");
+            System.out.println("5. Get Language Report");
+            System.out.println("6. Get Population Report");
+            System.out.println("7. Exit");
 
             System.out.print("User Choice: ");
 
@@ -62,19 +65,19 @@ public class App {
                         {
                             case 1:
                                 System.out.println("\nAll Countries");
-                                ArrayList<Country> allCountries = a.getAllCountries();
+                                ArrayList<Country> allCountries = a.getTopCountries();
                                 a.printCountries(allCountries);
                                 break;
                             case 2:
                                 System.out.print("\nEnter Continent: ");
                                 String continentName = input.next();
-                                ArrayList<Country> countriesByContinent = a.getCountriesByContinent(continentName);
+                                ArrayList<Country> countriesByContinent = a.getTopCountriesByContinent(continentName);
                                 a.printCountries(countriesByContinent);
                                 break;
                             case 3:
-                                System.out.print("\nEnter Regi1on: ");
+                                System.out.print("\nEnter Region: ");
                                 String regionName = input.next();
-                                ArrayList<Country> countriesByRegion = a.getCountriesByRegion(regionName);
+                                ArrayList<Country> countriesByRegion = a.getTopCountriesByRegion(regionName);
                                 a.printCountries(countriesByRegion);
                                 break;
                             case 4:
@@ -89,8 +92,69 @@ public class App {
                     {
                         System.out.println("Exiting Country Menu...");
                     }
+                case 2:
+                    break;
+                case 3:
+                    int city_name = 0;
+                    do {
+                        System.out.println("\nCITY MENU");
+                        System.out.println("------------");
+                        System.out.println("1. Print All Cities");
+                        System.out.println("2. Print Cities By Continent");
+                        System.out.println("3. Print Cities By Region");
+                        System.out.println("4. Print Single City");
+                        System.out.println("5. BACK");
+
+                        System.out.print("User Choice: ");
+
+                        while (!input.hasNextInt()) {
+                            System.out.print("User Choice: ");
+                            input.next();
+                        }
+
+                        country_choice = input.nextInt();
+                        Integer n = 0;
+
+                        switch(country_choice)
+                        {
+                            case 1:
+                                System.out.println("\nAll Cities");
+                                System.out.print("Enter Number Of Lines To Output: ");
+                                n = input.nextInt();
+                                ArrayList<City> allCities = a.getCitiesByArea("world","",n);
+                                a.printCities(allCities);
+                                break;
+                            case 2:
+                                System.out.print("\nEnter Continent: ");
+                                String continentName = input.next();
+                                System.out.print("Enter Number Of Lines To Output: ");
+                                n = input.nextInt();
+                                ArrayList<City> citiesByContinent = a.getCitiesByArea("continent",continentName,n);
+                                a.printCities(citiesByContinent);
+                                break;
+                            case 3:
+                                System.out.print("\nEnter Region: ");
+                                String regionName = input.next();
+                                System.out.print("Enter Number Of Lines To Output: ");
+                                n = input.nextInt();
+                                ArrayList<City> citiesByRegion = a.getCitiesByArea("region",regionName,n);
+                                a.printCities(citiesByRegion);
+                                break;
+                            case 4:
+                                System.out.print("\nEnter City Name: ");
+                                String cityName = input.next();
+                                City city = a.getCity(cityName);
+                                a.displayCity(city);
+                                break;
+                        }
+                    } while(country_choice != 5);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
             }
-        } while (choice != 4);
+        } while (choice != 7);
 
         // Disconnect from database
         a.disconnect();
@@ -247,6 +311,25 @@ public class App {
                             + country.continent + "\n"
                             + "Population: " + country.population + "\n"
                             + "Capital: " + country.capital + "\n");
+        }
+        else{
+            System.out.println("Country is null");
+        }
+    }
+
+    /**
+     * Displays a single country variables details.
+     * @param city - Country variable to be displayed
+     */
+    public static void displayCity(City city) {
+        if (city != null) {
+            System.out.println(
+                    city.id + "\n"
+                            + city.name + "\n"
+                            + city.country_code + "\n"
+                            + city.district + "\n"
+                            + city.country + "\n"
+                            + "Population: " + city.population + "\n");
         }
         else{
             System.out.println("Country is null");
@@ -877,31 +960,6 @@ public class App {
                     city.country != null ? city.country : city.country_code));
         }
     }
-
-    public void getCitiesByArea() {
-        try {
-            Scanner in = new Scanner(System.in);
-
-            System.out.print("Enter area type (world, continent, region, country, district): ");
-            String areaType = in.nextLine();
-
-            String areaName = "";
-            if (!areaType.equalsIgnoreCase("world")) {
-                System.out.print("Enter the name of the " + areaType + ": ");
-                areaName = in.nextLine();
-            }
-
-            System.out.print("Enter number of cities to display: ");
-            int n = in.nextInt();
-
-            ArrayList<City> cities = getCitiesByArea(areaType, areaName, n);
-            printCities(cities);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println("Failed to get city report");
-        }
-    }
-
 
     /**
      * Produces a report containing the population of an area
