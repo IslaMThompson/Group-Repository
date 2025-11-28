@@ -21,6 +21,11 @@ public class CountryLanguage {
     public String is_official;
 
     /**
+     * Country Language Total Speakers
+     */
+    public int total_speakers;
+
+    /**
      * Country Language Percentage
      */
     public double percentage;
