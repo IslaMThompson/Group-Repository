@@ -2,7 +2,7 @@ name: Bug Report
 description: File a bug report.
 title: "[Bug]: "
 labels: ["bug", "triage"]
-projects: ["Bryan7306/Group-Repository"]
+projects: ["Bryan7306/1060246126"]
 type: bug
 body:
   - type: markdown
