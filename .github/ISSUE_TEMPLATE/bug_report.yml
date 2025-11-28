@@ -31,21 +31,27 @@ body:
       label: Version
       description: What version of our software are you running?
       options:
-        - 1.0.2 (Default)
-        - 1.0.3 (Edge)
+        - 1.0.2
+        - 1.0.3
+        - 1.0.4
+        - 1.0.5
+        - 1.0.6
+        - 1.0.7
+        - 1.0.8
+        - 1.0.9
+        - 1.0.10
       default: 0
     validations:
       required: true
   - type: dropdown
-    id: browsers
+    id: os
     attributes:
-      label: What browsers are you seeing the problem on?
+      label: What OS are you seeing the problem on?
       multiple: true
       options:
-        - Firefox
-        - Chrome
-        - Safari
-        - Microsoft Edge
+        - Windows
+        - Linux
+        - MacOS
   - type: textarea
     id: logs
     attributes:
