@@ -36,11 +36,6 @@ public class App {
 
             System.out.print("User Choice: ");
 
-            while (!input.hasNextInt()) {
-                System.out.print("User Choice: ");
-                input.next();
-            }
-
             if(inDocker){
                 choice = 7;
             } else {
