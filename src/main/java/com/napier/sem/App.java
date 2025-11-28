@@ -17,7 +17,7 @@ public class App {
 
         // New scanner to read user-input throughout menu choices
         Scanner input = new Scanner(System.in);
-        int choice = 0;
+        int choice = 7;
 
         do
         {
@@ -34,12 +34,12 @@ public class App {
 
             System.out.print("User Choice: ");
 
-            if (System.console() == null) {
-                // Running in CI → skip Scanner, use defaults
-                choice = 7;
-            } else {
-                choice = input.nextInt();
+            while (!input.hasNextInt()) {
+                System.out.print("User Choice: ");
+                input.next();
             }
+
+            choice = input.nextInt();
 
             switch(choice)
             {
