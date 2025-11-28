@@ -34,10 +34,7 @@ public class App {
 
             System.out.print("User Choice: ");
 
-            while (!input.hasNextInt()) {
-                System.out.print("User Choice: ");
-                input.next();
-            }
+            input.next();
 
             if(input.hasNextInt())
             {
