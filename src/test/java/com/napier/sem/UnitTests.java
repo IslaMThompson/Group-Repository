@@ -12,21 +12,32 @@ public class UnitTests
     @BeforeAll
     static void init()
     {
+
         app = new App();
+        app.connect("localhost:33060", 30000);
     }
 
+    /**
+     * Test output when getCity input is null
+     */
     @Test
     void getCityTestNull()
     {
         app.getCity(null);
     }
 
+    /**
+     * Test output when getCountry input is null
+     */
     @Test
     void getCountryTestNull()
     {
         app.getCountry(null);
     }
 
+    /**
+     * Test displayCountry when Country variable is null
+     */
     @Test
     void displayCountryTestNull()
     {
@@ -34,6 +45,9 @@ public class UnitTests
         app.displayCountry(nullCountry);
     }
 
+    /**
+     * Test getCountries methods when inputs are null
+     */
     @Test
     void getCountriesByAreaTestNull()
     {
@@ -42,12 +56,18 @@ public class UnitTests
         app.getCountriesByRegion(null);
     }
 
+    /**
+     * Test output when printCountries input is null
+     */
     @Test
     void printCountriesTestNull()
     {
         app.printCountries(null);
     }
 
+    /**
+     * Test output when printCountries has an empty ArrayList
+     */
     @Test
     void printCountriesTestEmpty()
     {
@@ -55,12 +75,19 @@ public class UnitTests
         app.printCountries(countries);
     }
 
+    /**
+     * Test output when printLanguageReport has a null input
+     */
     @Test
     void printLanguageReportTestNull()
     {
+
         app.printLanguageReport(null);
     }
 
+    /**
+     * Test output when printLanguageReport is given an empty ArrayList
+     */
     @Test
     void printLanguageReportTestEmpty()
     {
@@ -68,6 +95,9 @@ public class UnitTests
         app.printLanguageReport(reports);
     }
 
+    /**
+     * Test output when getCitiesByArea is given null parameters
+     */
     @Test
     void getCitiesByAreaTestNullParams()
     {
@@ -77,12 +107,19 @@ public class UnitTests
         app.getCitiesByArea("world", "Europe", 0);
     }
 
+    /**
+     * Test output when printCities is given null
+     */
     @Test
     void printCitiesTestNull()
     {
+
         app.printCities(null);
     }
 
+    /**
+     * Test output when printCities is given an empty ArrayList
+     */
     @Test
     void printCitiesTestEmpty()
     {
@@ -90,18 +127,29 @@ public class UnitTests
         app.printCities(cities);
     }
 
+    /**
+     * Test output when getPopulationSummary is given a null parameter
+     */
     @Test
     void getPopulationSummaryTestNull()
     {
+
         app.getPopulationSummary(null, "Europe");
     }
 
+    /**
+     * Test output when printPopulationSummary has a null parameter
+     */
     @Test
     void printPopulationSummaryTestNull()
     {
+
         app.printPopulationSummary(null);
     }
 
+    /**
+     * Test output when getCapitalCities is given null parameters
+     */
     @Test
     void getCapitalCitiesTestNullParams()
     {
@@ -109,12 +157,19 @@ public class UnitTests
         app.getCapitalCities("world", "Europe", 0);
     }
 
+    /**
+     * Test output when printCapitalCities is given a null parameter
+     */
     @Test
     void printCapitalCitiesTestNull()
     {
+
         app.printCapitalCities(null);
     }
 
+    /**
+     * Test output when printCapitalCities is given an empty ArrayList
+     */
     @Test
     void printCapitalCitiesTestEmpty() {
         ArrayList<City> capitals = new ArrayList<City>();

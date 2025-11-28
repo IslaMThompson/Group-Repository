@@ -12,6 +12,9 @@ public class IntegrationTests
 {
     static App app;
 
+    /**
+     * Set up app variable to connect to database
+     */
     @BeforeAll
     static void init()
     {
@@ -20,6 +23,9 @@ public class IntegrationTests
 
     }
 
+    /**
+     * Test output from getCountry
+     */
     @Test
     void testGetCountry()
     {
@@ -34,6 +40,9 @@ public class IntegrationTests
 
     }
 
+    /**
+     * Test output from getCity
+     */
     @Test
     void testGetCity()
     {
@@ -46,6 +55,9 @@ public class IntegrationTests
         assertEquals(city.population, 450180);
     }
 
+    /**
+     * Test output from getLanguageReport
+     */
     @Test
     void testGetLanguageReport()
     {
@@ -58,6 +70,9 @@ public class IntegrationTests
         assertEquals(reports.get(0).language, "Chinese");
     }
 
+    /**
+     * Test output from getCitiesByArea where area is world
+     */
     @Test
     void testGetCitiesByAreaWorld()
     {
@@ -69,6 +84,9 @@ public class IntegrationTests
         assertEquals(cities.get(0).name, "Mumbai (Bombay)");
     }
 
+    /**
+     * Test output from getPopulationSummary where area is world
+     */
     @Test
     void testGetPopulationSummaryWorld()
     {
@@ -81,6 +99,9 @@ public class IntegrationTests
         assertTrue(ps.nonCityPop >= 0);
     }
 
+    /**
+     * Test output from getCapitalCities where area is world
+     */
     @Test
     void testGetCapitalCitiesWorld()
     {
