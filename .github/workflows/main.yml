@@ -72,7 +72,6 @@ jobs:
         run: |
           mvn package -DskipTests
           docker compose up --abort-on-container-exit
-          echo "7" | java -jar ./target/devops.jar localhost:33060 30000
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
