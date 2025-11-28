@@ -23,12 +23,11 @@ public class App {
             System.out.println("\nMAIN MENU");
             System.out.println("---------");
             System.out.println("1. Get Country Report");
-            System.out.println("2. Get Region Report");
-            System.out.println("3. Get City Report");
-            System.out.println("4. Get Capital City Report");
-            System.out.println("5. Get Language Report");
-            System.out.println("6. Get Population Report");
-            System.out.println("7. Exit");
+            System.out.println("2. Get City Report");
+            System.out.println("3. Get Capital City Report");
+            System.out.println("4. Get Language Report");
+            System.out.println("5. Get Population Report");
+            System.out.println("6. Exit");
 
             System.out.print("User Choice: ");
 
@@ -88,14 +87,9 @@ public class App {
                                 break;
                         }
                     } while(country_choice != 5);
-                    if(country_choice == 5)
-                    {
-                        System.out.println("Exiting Country Menu...");
-                    }
-                case 2:
                     break;
-                case 3:
-                    int city_name = 0;
+                case 2:
+                    int city_choice = 0;
                     do {
                         System.out.println("\nCITY MENU");
                         System.out.println("------------");
@@ -112,10 +106,10 @@ public class App {
                             input.next();
                         }
 
-                        country_choice = input.nextInt();
+                        city_choice = input.nextInt();
                         Integer n = 0;
 
-                        switch(country_choice)
+                        switch(city_choice)
                         {
                             case 1:
                                 System.out.println("\nAll Cities");
@@ -147,14 +141,77 @@ public class App {
                                 a.displayCity(city);
                                 break;
                         }
-                    } while(country_choice != 5);
+                    } while(city_choice != 5);
+                    if(city_choice == 5)
+                    {
+                        System.out.println("Exiting City Menu...");
+                    }
+                    break;
+                case 3:
+                    int capital_choice = 0;
+                    do {
+                        System.out.println("\nCAPITAL CITY MENU");
+                        System.out.println("--------------------");
+                        System.out.println("1. Print All Capital Cities");
+                        System.out.println("2. Print Capital Cities By Continent");
+                        System.out.println("3. Print Capital Cities By Region");
+                        System.out.println("4. Print Single Capital City");
+                        System.out.println("5. BACK");
+
+                        System.out.print("User Choice: ");
+
+                        while (!input.hasNextInt()) {
+                            System.out.print("User Choice: ");
+                            input.next();
+                        }
+
+                        capital_choice = input.nextInt();
+                        Integer n = 0;
+
+                        switch(capital_choice)
+                        {
+                            case 1:
+                                System.out.println("\nAll Capital Cities");
+                                System.out.print("Enter Number Of Lines To Output: ");
+                                n = input.nextInt();
+                                ArrayList<City> allCities = a.getCapitalCities("world","",n);
+                                a.printCapitalCities(allCities);
+                                break;
+                            case 2:
+                                System.out.print("\nEnter Continent: ");
+                                String continentName = input.next();
+                                System.out.print("Enter Number Of Lines To Output: ");
+                                n = input.nextInt();
+                                ArrayList<City> citiesByContinent = a.getCapitalCities("continent",continentName,n);
+                                a.printCapitalCities(citiesByContinent);
+                                break;
+                            case 3:
+                                System.out.print("\nEnter Region: ");
+                                String regionName = input.next();
+                                System.out.print("Enter Number Of Lines To Output: ");
+                                n = input.nextInt();
+                                ArrayList<City> citiesByRegion = a.getCapitalCities("region",regionName,n);
+                                a.printCapitalCities(citiesByRegion);
+                                break;
+                            case 4:
+                                System.out.print("\nEnter Capital City Name: ");
+                                String capitalName = input.next();
+                                City capitalCity = a.getCapitalCity(capitalName);
+                                a.displayCapitalCity(capitalCity);
+                                break;
+                        }
+                    } while(capital_choice != 5);
+                    if(capital_choice == 5)
+                    {
+                        System.out.println("Exiting Capital City Menu...");
+                    }
                     break;
                 case 4:
                     break;
                 case 5:
                     break;
             }
-        } while (choice != 7);
+        } while (choice != 6);
 
         // Disconnect from database
         a.disconnect();
@@ -256,6 +313,50 @@ public class App {
     }
 
     /**
+     * Retrieve specified city details.
+     * @param name - String for selected city name
+     * @return city
+     */
+    public City getCapitalCity(String name) {
+        if(name == null)
+        {
+            System.out.println("Name is null.");
+            return null;
+        }
+
+        try {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // Create string for SQL statement
+            String strSelect =
+                    "SELECT city.ID, city.Name AS Capital, country.Name AS Country, city.Population, city.CountryCode, city.District " +
+                            "FROM city " +
+                            "JOIN country ON city.ID = country.Capital" +
+                            "WHERE city.Name = '" + name + "';";
+            // Execute SQL statement
+            ResultSet rset = stmt.executeQuery(strSelect);
+            // Return new employee if valid.
+            // Check one is returned
+            if (rset.next()) {
+                City city = new City();
+                city.id = rset.getInt("ID");
+                city.name = rset.getString("Name");
+                city.country_code = rset.getString("CountryCode");
+                city.district = rset.getString("District");
+                city.population = rset.getInt("Population");
+                return city;
+            } else
+                return null;
+
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get city details");
+            return null;
+        }
+    }
+
+    /**
      * Retrieve specified country details.
      * @param name - String for selected country name
      * @return
@@ -330,6 +431,24 @@ public class App {
                             + city.district + "\n"
                             + city.country + "\n"
                             + "Population: " + city.population + "\n");
+        }
+        else{
+            System.out.println("Country is null");
+        }
+    }
+
+    /**
+     * Displays a single country variables details.
+     * @param capitalCity - Country variable to be displayed
+     */
+    public static void displayCapitalCity(City capitalCity) {
+        if (capitalCity != null) {
+            System.out.println(
+                    capitalCity.id + "\n"
+                            + capitalCity.name + "\n"
+                            + capitalCity.country_code + "\n"
+                            + capitalCity.district + "\n"
+                            + "Population: " + capitalCity.population + "\n");
         }
         else{
             System.out.println("Country is null");
@@ -1162,35 +1281,6 @@ public class App {
 
             System.out.println(String.format("%-35s %-35s %-15d",
                     c.name, c.country, c.population));
-        }
-    }
-
-    public void getCapitalCitiesReport()
-    {
-        try
-        {
-            Scanner in = new Scanner(System.in);
-
-            System.out.print("Enter area type (world, continent, region): ");
-            String areaType = in.nextLine();
-
-            String areaName = "";
-            if (!areaType.equalsIgnoreCase("world"))
-            {
-                System.out.print("Enter the name of the " + areaType + ": ");
-                areaName = in.nextLine();
-            }
-
-            System.out.print("Enter number of capital cities to display: ");
-            int n = in.nextInt();
-
-            ArrayList<City> capitals = getCapitalCities(areaType, areaName, n);
-            printCapitalCities(capitals);
-        }
-        catch (Exception e)
-        {
-            System.out.println(e.getMessage());
-            System.out.println("Failed to get capital cities report");
         }
     }
 }
