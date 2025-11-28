@@ -14,7 +14,6 @@ public class UnitTests
     {
 
         app = new App();
-        app.connect("localhost:33060", 30000);
     }
 
     /**
