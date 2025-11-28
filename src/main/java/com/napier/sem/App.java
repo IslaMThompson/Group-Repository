@@ -34,13 +34,11 @@ public class App {
 
             System.out.print("User Choice: ");
 
-            input.next();
-
-            if(input.hasNextInt())
-            {
-                choice = input.nextInt();
-            } else {
+            if (System.console() == null) {
+                // Running in CI → skip Scanner, use defaults
                 choice = 7;
+            } else {
+                choice = input.nextInt();
             }
 
             switch(choice)
