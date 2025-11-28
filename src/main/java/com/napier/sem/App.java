@@ -15,6 +15,8 @@ public class App {
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
+        // Used to check if running in docker (if so then menu will exit instead of hanging)
+        boolean inDocker = new java.io.File("/.dockerenv").exists();
         // New scanner to read user-input throughout menu choices
         Scanner input = new Scanner(System.in);
         int choice = 7;
@@ -39,7 +41,11 @@ public class App {
                 input.next();
             }
 
-            choice = input.nextInt();
+            if(inDocker){
+                choice = 7;
+            } else {
+                choice = input.nextInt();
+            }
 
             switch(choice)
             {
