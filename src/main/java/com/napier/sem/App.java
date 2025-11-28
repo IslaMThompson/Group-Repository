@@ -15,11 +15,13 @@ public class App {
             a.connect(args[0], Integer.parseInt(args[1]));
         }
 
+        // New scanner to read user-input throughout menu choices
         Scanner input = new Scanner(System.in);
         int choice = 0;
 
         do
         {
+            // Main Menu System
             System.out.println("\nMAIN MENU");
             System.out.println("---------");
             System.out.println("1. Get Country Report");
@@ -44,6 +46,7 @@ public class App {
                 case 1:
                     int country_choice = 0;
                     do {
+                        // Country Menu System
                         System.out.println("\nCOUNTRY MENU");
                         System.out.println("------------");
                         System.out.println("1. Print All Countries");
@@ -92,6 +95,7 @@ public class App {
                 case 2:
                     int city_choice = 0;
                     do {
+                        // City Menu System
                         System.out.println("\nCITY MENU");
                         System.out.println("------------");
                         System.out.println("1. Print All Cities");
@@ -169,6 +173,7 @@ public class App {
                 case 3:
                     int capital_choice = 0;
                     do {
+                        // Capital City Menu System
                         System.out.println("\nCAPITAL CITY MENU");
                         System.out.println("--------------------");
                         System.out.println("1. Print All Capital Cities");
@@ -226,6 +231,7 @@ public class App {
                     }
                     break;
                 case 4:
+                    // Language Report Display
                     ArrayList<CountryLanguage> langReport = a.getLanguageReport();
                     System.out.println("\nLANGUAGE REPORT");
                     System.out.println("---------------");
@@ -234,6 +240,7 @@ public class App {
                 case 5:
                     int pop_choice = 0;
                     do {
+                        // Population Report Menu System
                         System.out.println("\nPOPULATION REPORT MENU");
                         System.out.println("--------------------");
                         System.out.println("1. Print World Population Report");
@@ -300,6 +307,7 @@ public class App {
                 case 6:
                     int popsum_choice = 0;
                     do {
+                        // Population Summary Menu System
                         System.out.println("\nPOPULATION SUMMARY MENU");
                         System.out.println("--------------------");
                         System.out.println("1. Print World Population Summary");
@@ -562,7 +570,7 @@ public class App {
     }
 
     /**
-     * Displays a single country variables details.
+     * Displays a single city variables details.
      * @param city - Country variable to be displayed
      */
     public static void displayCity(City city) {
@@ -581,7 +589,7 @@ public class App {
     }
 
     /**
-     * Displays a single country variables details.
+     * Displays a single capital city variables details.
      * @param capitalCity - Country variable to be displayed
      */
     public static void displayCapitalCity(City capitalCity) {
@@ -942,6 +950,12 @@ public class App {
         }
     }
 
+    /**
+     * Returns a population summary containing the area name and total population.
+     * @param type - specifies area type (world/continent/region/country/district/city)
+     * @param area - area name for WHERE queries
+     * @return PopulationSummary ps
+     */
     public PopulationSummary getPopulation(String type, String area) {
         if(type == null)
         {
@@ -999,6 +1013,10 @@ public class App {
         }
     }
 
+    /**
+     * Prints the area name and the total population to console.
+     * @param pop - PopulationSummary object containing areaName and total population info
+     */
     public void printPopulation(PopulationSummary pop)
     {
         try{
