@@ -17,7 +17,7 @@ public class App {
 
         // New scanner to read user-input throughout menu choices
         Scanner input = new Scanner(System.in);
-        int choice = 0;
+        int choice = 7;
 
         do
         {
@@ -62,7 +62,10 @@ public class App {
                             input.next();
                         }
 
-                        country_choice = input.nextInt();
+                        if(input.hasNextInt() == true)
+                        {
+                            country_choice = input.nextInt();
+                        }
 
                         switch(country_choice)
                         {
